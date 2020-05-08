@@ -1,0 +1,587 @@
+import json
+from django.http import JsonResponse
+from django.shortcuts import render, redirect 
+from django.http import HttpResponse
+from django.contrib.auth.models import auth
+# from myuser.models import User
+# from myuser.models import UserManager
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from .models import *
+import re, csv
+from datetime import datetime
+import pytz
+from .forms import *
+from django.db.models import Q
+import string  
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
+allpunc = string.punctuation
+
+tz = pytz.timezone('Asia/Kolkata')
+
+def dashboard(request,  user_id=None):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            myprofile = profile.objects.get(owner = user)
+            total_notify = myprofile.all_notify
+
+            form = Prof_form()
+            status_form = Status_form()
+            pictures = Profile_pic.objects.all().filter(owner=request.user).last()
+            status = Status.objects.all().filter(owner=request.user).order_by('-id')
+            status_likelist_islike=[]
+            for i in status:
+                islike =  Likes.objects.filter(status_id=i.id, who_like=user).exists()
+                status_likelist_islike.append([i,islike])
+
+            context= {'profile':myprofile, 'form' : form,  'status_form' : status_form,
+                    'pimages' : pictures, 'status':status_likelist_islike,
+                    'all_notify':total_notify}
+            return render(request, 'profile.html', context) 
+
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+
+
+
+def chat(request,  user_id=None , ricvr_id=None) :
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+
+    elif request.user.is_authenticated:
+        user = request.user
+        myprofile = profile.objects.get(owner = user)
+       
+        if int(ricvr_id) == int(user_id):
+
+            total_notify = myprofile.all_notify
+            thischat_key= str(user_id+"@"+user_id)
+            oldchat = Chate.objects.all().filter(chatkey=thischat_key)
+
+            context = {'ourchat': oldchat ,'rcvr': user,
+            'rcvr_id':user.id, 'all_notify':total_notify, 'chat_key':thischat_key}
+            return render(request, 'chat.html', context)
+
+        else:
+            # now he is reading msz so remove some notification
+
+            ricvr = User.objects.get(id=int(ricvr_id))
+            thischat_key =  str(min(user.id, int(ricvr_id))) + "@" + str(max(user.id, int(ricvr_id)))
+
+            oldchat = Chate.objects.all().filter(chatkey=thischat_key)
+
+            # notifiction  --n     ********************************
+            n1 = 0
+            n2 = 0 
+            # following
+            flwing = User_Following.objects.all().filter(user_id=user.id, following=ricvr)
+            if len(flwing) != 0:
+                flwing1 = flwing[0]
+                n1 = flwing1.notification
+                flwing1.notification = 0
+                flwing1.save()
+
+            # followers
+            flwer = User_Follower.objects.all().filter(user_id=user.id, follower=ricvr)
+            if len(flwer) != 0:
+                flwer1 = flwer[0]
+                n2 = flwer1.notification
+                flwer1.notification = 0
+                flwer1.save()
+
+            # all notify**********************
+            myprofile.all_notify = myprofile.all_notify - max(n1, n2)   #hopefully n1=n2
+            myprofile.save()
+
+            total_notify2 = myprofile.all_notify
+            # **************************************************
+            context = {'ourchat': oldchat ,'rcvr': ricvr,
+            'rcvr_id':ricvr_id, 'all_notify':total_notify2, 'chat_key':thischat_key}
+            return render(request, 'chat.html', context)
+    else:
+        messages.info(request, 'Please Login First')
+        return render(request, 'login.html')
+
+def myfrnd(request,  user_id=None) :
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            myprofile = profile.objects.get(owner = user)
+            total_notify = myprofile.all_notify
+            
+            # following
+            flwing = User_Following.objects.all().filter(user_id=user.id)
+            
+            query = Q(owner=user)
+            profile_flwing=[]
+            for i in flwing:
+                query.add(Q(owner=i.following), Q.OR)
+                hisprofile = profile.objects.get(owner = i.following)
+                profile_flwing.append([i , hisprofile])
+
+            # follower       list of pair 
+            flwer = User_Follower.objects.all().filter(user_id=user.id)
+            profile_flwer=[]
+            for i in flwer:
+                himprofile = profile.objects.get(owner = i.follower)
+                profile_flwer.append([i , himprofile])
+
+            allstatus = Status.objects.all().filter(query).order_by('-id')
+            status_likelist_islike=[]
+            for i in allstatus:
+                islike = Likes.objects.filter(status_id=i.id,who_like=user).exists()
+                status_likelist_islike.append([i,islike])
+
+
+            context =  { 'allfollowing': profile_flwing, 'allfolower': profile_flwer,
+                        'all_notify':total_notify, 'status':status_likelist_islike}
+
+            return render(request, 'myfrnd.html', context)
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+def findfrnd(request,  user_id=None) :
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            myprofile = profile.objects.get(owner = user)
+            total_notify = myprofile.all_notify
+            myflwing = User_Following.objects.all().filter(user_id=user.id)
+            all_users = User.objects.all().exclude(id=user.id)
+            for f in myflwing:
+                all_users=all_users.exclude(id=f.following.id)   
+                 #remove those are already  following
+            all_users = all_users.order_by('first_name')
+            return render(request, 'findfrnd.html', {'alluser': all_users, 'all_notify':total_notify})
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+def saveprofile(request,user_id=None ):
+    print("start saveprofile")
+    user = request.user
+    myprofile = profile.objects.get(owner = user)
+
+    bio = request.POST['bio']
+    livesin = request.POST['livesin']
+    hometown = request.POST['hometown']
+    school = request.POST['school']
+    fullname = request.POST['fullname']
+
+    myprofile.fullname = fullname
+    myprofile.bio = bio
+    myprofile.livesin = livesin
+    myprofile.hometown = hometown
+    myprofile.school = school
+    myprofile.save()
+
+    user.first_name = fullname
+    user.save()
+    print("saved")
+    return redirect('/user/' +str(request.user.id))
+
+def following(request,user_id=None ):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.all().filter(owner = request.user)[0]
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            ideal_user_id = request.POST['idealid']
+            ideal_user = User.objects.get(id=int(ideal_user_id))
+
+            # following **************************************************
+            newflwing = User_Following(user_id = user.id, following = ideal_user, notification=0)
+            newflwing.save()
+            
+            # # follower ***************************************************
+            newflwr = User_Follower(user_id = ideal_user.id, follower = user, notification=0)
+            newflwr.save()
+
+            return HttpResponse("success")
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+
+def delete_flwing(request,user_id=None ):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            myprofile = profile.objects.get(owner = user)
+            whom = request.POST['idealid']
+            his_profile = profile.objects.get(owner = int(whom))
+
+            flwinglist = User_Following.objects.filter(user_id=user.id, following=int(whom))
+            if len(flwinglist) !=0:
+                myprofile.all_notify =myprofile.all_notify -  flwinglist[0].notification
+                flwinglist.delete()
+
+            flwerlist = User_Follower.objects.filter(user_id=int(whom), follower=user.id)
+            if len(flwerlist) !=0:
+                his_profile.all_notify =his_profile.all_notify -  flwerlist[0].notification
+                flwerlist.delete()
+
+            myprofile.save()
+            his_profile.save()
+
+            return HttpResponse("success")
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+def delete_flwer(request,user_id=None ):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            whom = request.POST['flwer_del_id']
+
+            myprofile = profile.objects.get(owner = user)
+            his_profile = profile.objects.get(owner = int(whom))
+
+            flwerlist = User_Follower.objects.filter(user_id=user.id, follower=int(whom))
+            if len(flwerlist) !=0:
+                myprofile.all_notify =myprofile.all_notify -  flwerlist[0].notification
+                flwerlist.delete()
+
+            flwinglist = User_Following.objects.filter(user_id=int(whom), following=user.id)
+            if len(flwinglist) !=0:
+                his_profile.all_notify =his_profile.all_notify -  flwinglist[0].notification
+                flwinglist.delete()
+
+            myprofile.save()
+            his_profile.save()
+
+            return HttpResponse("success")
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+
+def chat_del(request,user_id=None,  ricvr_id=None):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            thischat_key = request.POST['chate_key_del']
+
+            Chate.objects.all().filter(chatkey = thischat_key).delete()
+
+            return HttpResponse("success")
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+def prof_del(request,user_id=None,  ricvr_id=None):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.get(owner = request.user)
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            profile.objects.all().filter(owner = user).delete()
+            Chate.objects.all().filter(sender= user).delete()
+            User_Following.objects.all().filter(user_id= user.id).delete()
+            User_Following.objects.all().filter(following= user).delete()
+            User_Follower.objects.all().filter(user_id= user.id).delete()
+            User_Follower.objects.all().filter(follower= user).delete()
+            Profile_pic.objects.all().filter(owner= user).delete()
+            Status.objects.all().filter(owner= user).delete()
+            User.objects.all().filter(id= user.id).delete()
+
+            return render(request, 'home.html')
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+
+def viewprofile(request,user_id=None, ricvr_id=None ):
+    if int(user_id) != request.user.id:
+        myprofile = profile.objects.all().filter(owner = request.user)[0]
+        myprofile.isactive = False
+        myprofile.save()
+        auth.logout(request)
+        messages.info(request, 'you entered wrong url')
+        return render(request, 'login.html')
+    else:
+        if request.user.is_authenticated:
+            user = request.user
+            # who_id = request.POST['userid_view']
+            whose_user = User.objects.get(id=int(ricvr_id))
+            whose_profile = profile.objects.get(owner=whose_user)
+            status = Status.objects.all().filter(owner=whose_user).order_by('-id')
+            status_likelist_islike=[]
+            for i in status:
+                islike =  Likes.objects.filter(status_id=i.id, who_like= user).exists()
+                status_likelist_islike.append([i,islike])
+
+            pictures = Profile_pic.objects.all().filter(owner=whose_user).last()
+            num_flwing= User_Following.objects.all().filter(user_id=int(ricvr_id)).count()
+            num_flwer= User_Follower.objects.all().filter(user_id=int(ricvr_id)).count()
+
+            return render(request, 'viewprofile.html' , {'whose_profile' :whose_profile, 'status':status_likelist_islike, 'pimages':pictures, 'num_flwing':num_flwing, 'num_flwer':num_flwer})
+        else:
+            messages.info(request, 'Please Login First')
+            return render(request, 'login.html')
+
+
+def send_msz(request,user_id=None):
+
+    user = request.user
+    last_msz_id = request.POST['last_msz_id']
+    curmsz = request.POST['mymsz']
+    chat_key = request.POST['chat_key']
+    rcvr = request.POST['rcvr_id']
+    
+    newstr = curmsz
+    newmsz_list = []
+    for c in curmsz:
+        if c =='\n':
+            newmsz_list.append(" <br> ")
+        elif c ==' ':
+            newmsz_list.append(" &nbsp; ")
+        elif c =='\t':
+            newmsz_list.append(" &nbsp; &nbsp; &nbsp; &nbsp;")
+
+        elif c.isalnum():
+            newmsz_list.append(c)
+        elif c in allpunc:
+            newmsz_list.append(c)
+        else:
+            newmsz_list.append(str(' &#x{:X}; '.format(ord(c))))
+
+    newmsz = ''.join(newmsz_list)
+
+
+    if len(newstr.strip()) == 0:
+        pass
+    elif int(rcvr)==user.id:
+        tempdate = datetime.now(tz).strftime("%a %-d %b, %-I:%M %p")
+        msz1 = Chate(sender=user, chatkey=chat_key, msz=newmsz, date=tempdate)
+        msz1.save()
+
+    else:
+        # notifiction  +1     ********************************
+        # following
+        flwing = User_Following.objects.all().filter(user_id=int(rcvr), following=user)
+        if len(flwing) != 0:
+            flwing1 = flwing[0]
+            flwing1.notification = flwing1.notification + 1
+            flwing1.save()
+
+        # followers
+        flwer = User_Follower.objects.all().filter(user_id=int(rcvr), follower=user)
+        if len(flwer) != 0:
+            flwer1 = flwer[0]
+            flwer1.notification = flwer1.notification + 1
+            flwer1.save()
+        # all notify**********************
+
+        user_ricvr = User.objects.get(id=int(rcvr))
+        rcvr_profile = profile.objects.get(owner = user_ricvr)
+        rcvr_profile.all_notify =  rcvr_profile.all_notify  + 1
+        rcvr_profile.save()
+        # **************************************************
+
+        
+        tempdate = datetime.now(tz).strftime("%a %-d %b, %-I:%M %p")
+        msz1 = Chate(sender=user, chatkey=chat_key, msz=newmsz, date=tempdate)
+        msz1.save()
+
+    last_msz_id1 = int(last_msz_id)
+    after_chat = list(Chate.objects.all().filter(chatkey=chat_key, pk__gt=last_msz_id1).order_by('id').values())
+    return JsonResponse(after_chat, safe=False)
+
+def check_msz(request,user_id=None):
+
+    last_msz_id = request.POST['last_msz_id']
+    chat_key = request.POST['chat_key']
+
+    last_msz_id1 = int(last_msz_id)
+    after_chat = list(Chate.objects.all().filter(chatkey=chat_key, pk__gt=last_msz_id1).order_by('id').values())
+    return JsonResponse(after_chat, safe=False)
+
+def find_all_liker(request,user_id=None):
+    status_id = request.POST['status_id']
+    status_id1 = int(status_id)
+
+    all_liker = list(Likes.objects.all().filter(status_id=status_id1).order_by('id').values('who_like__first_name','who_like'))
+    return JsonResponse(all_liker, safe=False)
+
+def update_pic(request, user_id=None): 
+    if request.method == 'POST': 
+        form = Prof_form(request.POST, request.FILES) 
+        if form.is_valid():
+            temp = form.save(commit=False) 
+            temp.owner = request.user
+            temp.save()
+
+            # return redirect('success') 
+    else: 
+        form = Prof_form()
+    return redirect('/user/' +str(request.user.id))
+
+
+def update_status(request, user_id=None): 
+    if request.method == 'POST': 
+        form = Status_form(request.POST, request.FILES) 
+        if form.is_valid(): 
+            temp = form.save(commit=False) 
+            temp.owner = request.user
+            temp.save()
+
+            # return redirect('success') 
+    else: 
+        form = Status_form()
+    return redirect('/user/' +str(request.user.id)+"#posts")
+
+
+def likes(request, user_id=None):
+    status_id = request.POST['status_id']
+    oldlike, newlike = Likes.objects.get_or_create(status_id=int(status_id), who_like=request.user)
+
+    if newlike:
+        the_status = Status.objects.get(id=int(status_id))
+        the_status.num_like +=1
+        numlike = the_status.num_like
+        the_status.save()
+
+    else:
+        oldlike.delete()
+        the_status = Status.objects.get(id=int(status_id))
+        the_status.num_like -=1
+        numlike = the_status.num_like
+        the_status.save()
+
+    return HttpResponse(numlike) # Sending an success response
+
+def other_likes(request, user_id=None, ricvr_id=None ):
+    status_id = request.POST['status_id']
+
+    oldlike, newlike = Likes.objects.get_or_create(status_id=int(status_id), who_like=request.user)
+
+    if newlike:
+        the_status = Status.objects.get(id=int(status_id))
+        the_status.num_like +=1
+        the_status.save()
+
+    else:
+        oldlike.delete()
+        the_status = Status.objects.get(id=int(status_id))
+        the_status.num_like -=1
+        the_status.save()
+
+    return redirect('/user/' +str(request.user.id) + "/viewprofile/"+ str(ricvr_id) + "#" + str(status_id))
+
+
+def del_status(request, user_id=None):
+    status_id = request.POST['status_id']
+    
+    the_status = Status.objects.get(id=int(status_id))
+    the_status.delete()
+    Likes.objects.filter(status_id=int(status_id)).delete()
+    return HttpResponse("success") # Sending an success response
+
+def del_prof_pic(request, user_id=None):
+    Profile_pic.objects.all().filter(owner=request.user).delete()
+
+    return redirect('/user/' +str(request.user.id))
+
+
+def email_send(request, user_id=None):
+    print("email sending")
+    user=request.user
+    otp = str((user.id *7124587)%987267)
+    print(otp)
+    subject = "Email Address Verification for Squirrel"
+    str1 = "Hello " + str(user.first_name)
+    str2 = "\n your OTP for email verification on Squirrel is" 
+    str3 = "\n OTP : " + otp 
+    str4 = "\n user id : " + str(user.id) 
+    str5 = "\n email :" + str(user.email)
+    str6 = "\n \n Thank you for using Squirrel \n Squirrel Team \n \n https://squirrel.pythonanywhere.com/"
+
+    message =  str1 + str2 + str3 + str4 + str5 + str6
+
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [str(user.email),]
+    print("mail ready")
+    try:
+        send_mail( subject, message, email_from, recipient_list )
+        print("email sent")
+        return redirect('/public/')
+    except Exception:
+        print("there is some problem in sending mail")
+        return redirect('/user/' +str(request.user.id))
+
+
+# imp ++++++++++++++**********++++++++++
+# id = 'some identifier'
+# person, created = Person.objects.get_or_create(identifier=id)
+
+# if created:
+#    # means you have created a new person
+# else:
+#    # person just refers to the existing one

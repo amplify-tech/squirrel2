@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Explore {% endblock %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/findfrnd.css' %}">
+ {% endblock %}
+{% block content %} 
+
+
+<div class="row">
+  <div class="col-sm-4"></div>
+  <div class="col-sm-4 well" style="max-height: 450px; overflow: auto;">
+
+    <table> 
+  {% for i in alluser %}  
+  <tr id="user{{i.id}}"> 
+    <td  class="view_col">
+            <a href="viewprofile/{{i.id}}"><i style="font-size: 30px;" class='fas fa-user-circle'></i></a>
+  </td >
+  <td class="name_col">
+    <p style="width: 100%;">  {{i.first_name | slice:"0:20"}} </p>
+  </td>
+  <td  class="fol_col"> 
+
+<button class="followbtn" id="flwbtn{{i.id}}"  data-catid="{{i.id }}">Follow</button>
+<button class="unfollowbtn" style="display: none;" id="unflwbtn{{i.id}}"  data-catid="{{i.id }}">unFollow</button>
+
+  </td>
+</tr>
+{% endfor %}
+</table>
+</div>
+
+  <div class="col-sm-4"></div>
+
+</div>
+
+{% endblock %}
+
+{% block jquery %}
+
+<script>
+$("#explore_id").attr("class", "btn btn-success topic")
+
+  $('.followbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/following/",
+      data:{
+               idealid: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+        $( '#flwbtn'+ catid ).hide();
+        $( '#unflwbtn'+ catid ).show();
+      }
+   })
+});
+</script>
+<script>
+  $('.unfollowbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/delete_flwing/",
+      data:{
+               idealid: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+        $( '#unflwbtn'+ catid ).hide();
+        $( '#flwbtn'+ catid ).show();
+      }
+   })
+});
+</script>
+{% endblock %}

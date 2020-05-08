@@ -1,0 +1,260 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Network {% endblock %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/myfrnd.css' %}">
+ {% endblock %}
+
+{% block content %} 
+
+ 
+<div class="row">
+<div class="col-sm-2"></div>
+<div class="col-sm-8 well">
+  <div class="row">
+<div class="col-sm-6 well listing">
+  <!-- following -->
+
+  <h2> <span id="numflwing">{{ allfollowing|length }}</span> Following</h2>
+  <table> 
+  {% for i,j in allfollowing %}
+  <tr id="flwing{{i.following.id}}"> 
+    <td class="view_col">
+      <a href="viewprofile/{{i.following.id}}"><i style="font-size: 30px;" class='fas fa-user-circle'></i></a>
+
+  </td>
+  <td class="del_col">
+<button class="btn btn-default btn-sm del_icon delflwingbtn" id="flwbtn{{i.following.id}}"  data-catid="{{i.following.id }}"> <span class="glyphicon glyphicon-trash"></span> </button>
+
+</td>
+
+<td class="chat_col">
+    <form action="/user/{{user.id}}/chat/{{i.following.id}}#heading" method="POST" >
+        {% csrf_token %}
+      <p> 
+       <button  style="width: 100%; padding: 2px;" type="submit">{{i.following.first_name }}</button>
+     </p>
+   </form>
+ </td>
+ <td class="not_col"> 
+       {% ifequal  i.notification 0  %}
+       {%else%}
+         <p> <span class="badge">{{i.notification }}</span> </p>
+        {% endifequal %}
+</td>
+<td class="act_col">
+
+       {% if  j.isactive   %}   
+          <div class="active_dot"></div>
+       {%else%}
+      {% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
+
+</div>
+
+<div class="col-sm-6 well listing">
+<!-- follower  -->
+
+  <h2> <span id="numflwer">{{ allfolower|length }}</span>  Followers</h2>
+  <table>
+  {% for i,j in allfolower %}
+  <tr id="flwerline{{i.follower.id}}"> 
+    <td class="view_col">
+      <a href="viewprofile/{{i.follower.id}}"><i style="font-size: 30px;" class='fas fa-user-circle'></i></a>
+
+  </td>
+  <td class="del_col">
+
+<button class="btn btn-default btn-sm del_icon delflwerbtn" id="flwbtn{{i.follower.id}}"  data-catid="{{i.follower.id }}"> <span class="glyphicon glyphicon-trash"></span> </button>
+
+</td>
+<td class="chat_col">  
+    <form action="/user/{{user.id}}/chat/{{i.follower.id}}#heading" method="POST" >
+        {% csrf_token %}
+      <p> 
+       <button  style="width: 100%; padding: 2px;" type="submit">{{i.follower.first_name }}</button>
+     </p>
+   </form>
+   
+</td>
+<td class="not_col">
+       {% ifequal i.notification  0  %}
+       {%else%}
+        <p><span class="badge">{{i.notification }}</span></p>
+      {% endifequal %}
+</td>
+<td class="act_col">
+
+       {% if  j.isactive   %}   
+          <div class="active_dot"></div>
+       {%else%}
+      {% endif %}
+
+</td>
+  </tr>
+{% endfor %}
+</table>
+
+</div>
+</div>
+</div>
+<div class="col-sm-2"></div>
+</div>
+
+ <!-- posts from follwoinf -->
+<div class="row">
+  <div class="col-sm-2"> </div>
+<div class="col-sm-8 well" style="padding: 7px; font-size: 18px;"> 
+    <h3 style="text-align: center; color: blue;">Posts <span> from following</span></h3> 
+
+    {% for st,islike  in status %}
+    <div class="flwingpost{{st.owner.id}}" style="border: 1px solid black;  padding: 10px;">
+      <p > <b> <a href="viewprofile/{{st.owner.id}}">{{st.owner.first_name}}  </a> </b> posted :</p>
+
+     <p > {{st.status|linebreaks }} </p>
+
+      {% if st.status_pic %}
+          <img src="{{ st.status_pic.url }}" style="width:400px; max-width: 100%; max-height: 400px; margin-bottom: 15px;">
+          <br>
+      {% endif %}
+      
+        <span  style="color: blue;" id="numlike{{st.id}}">{{ st.num_like }}</span>
+        <span  style="color: blue;"> likes </span>
+  {% if islike %}
+ <button class="likebutton blue" id="like{{st.id}}"  data-catid="{{ st.id }}">Liked</button>
+ {% else %}
+ <button class="likebutton" id="like{{st.id}}"  data-catid="{{ st.id }}">Like</button>
+  {% endif %}
+
+ <button class="all_liker" id="all_liker{{st.id}}"  data-catid="{{ st.id }}">who likes</button>
+
+  <div id="liker_list{{st.id}}"></div>
+
+      </div>
+
+      <br class="flwingpost_line{{st.owner.id}}">  
+    {% endfor %}
+
+
+</div>
+  <div class="col-sm-2"> </div>
+</div>
+{% endblock %}
+
+{% block jquery %}
+
+<script>
+$("#network_id").attr("class", "btn btn-success topic")
+
+  $('.likebutton').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/likes/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        if ($('#like'+ catid).text() == "Like")
+           $('#like'+ catid).text("Liked")
+
+        else
+           $('#like'+ catid).text("Like");
+
+
+        $( '#like'+ catid ).toggleClass("blue");
+        $( '#numlike'+ catid ).text(data);
+      }
+   })
+});
+</script>
+
+<script>
+  $('.delflwingbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/delete_flwing/",
+      data:{
+               idealid: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+        $('#flwing'+ catid).remove(); 
+        $('.flwingpost'+ catid).remove(); 
+        $('.flwingpost_line'+ catid).remove(); 
+
+        var newnmfling = parseInt($('#numflwing').text()) -1;
+        $('#numflwing').text(newnmfling);
+      }
+   })
+});
+</script>
+
+<script>
+  $('.delflwerbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/delete_flwer/",
+      data:{
+               flwer_del_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+        $('#flwerline'+ catid).remove(); 
+        var newnmflwer = parseInt($('#numflwer').text()) -1;
+        $('#numflwer').text(newnmflwer);
+      }
+   })
+});
+</script>
+<script>
+
+  $('.all_liker').click(function(){
+  var catid = $(this).attr("data-catid");
+  if ( $("#numlike" + catid).text() =="0"){
+      $("#liker_list" + catid).empty();
+      $("#all_liker"+catid).text("who likes");
+  }
+  else if( $("#liker_list" + catid).has("a").length){
+    $("#liker_list" + catid).empty();
+    $("#all_liker"+catid).text("who likes");
+  }
+  else{ 
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/find_all_liker/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+          for (var i = 0; i < data.length; i++) {
+            $("<a>" + data[i].who_like__first_name +"</a><br>").attr("href",
+              "/user/{{user.id}}/viewprofile/"+data[i].who_like).appendTo("#liker_list" + catid);
+          }
+        $("#all_liker"+catid).text("hide");
+
+      }
+   })
+ }
+});
+
+</script>
+{% endblock %}

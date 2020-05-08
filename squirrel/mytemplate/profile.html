@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Profile {% endblock %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/profile.css' %}">
+ {% endblock %}
+
+{% block content %} 
+<div class="row"> 
+  <div class="col-sm-2"></div>
+  <div class="col-sm-4 well" style="text-align: center; height: 300px;"> 
+     {% load staticfiles %}
+
+      {% if pimages.prof_pic %}
+         <img src="{{ pimages.prof_pic.url }}" style="max-width:80%; max-height: 80%;" >
+      {% else %}
+         <img src="{% static 'user.png' %}" alt="{{user.first_name}}" style="width:40%">
+      {% endif %}
+
+      <br>
+      <h2 style="color: green;" id="write5">{{user.first_name}}</h2>
+      <br><br>
+  </div>
+
+    <div class="col-sm-4 well" style="height: 300px;">
+      <p> <i> About: </i> </p>
+      <p> <b> <span id="write1">  {{profile.bio}} </span> </b></p>
+      <p> <i> Lives in: </i> <b> <span id="write2">  {{profile.livesin}} </span></b> </p>
+      <p> <i> From: </i> <b> <span id="write3">  {{profile.hometown}} </span> </b> </p>
+      <p> <i> Studies/Working at: </i> <b> <span id="write4">  {{profile.school}} </span> </b> </p>
+
+
+</div>
+  <div class="col-sm-2"></div>
+</div>
+
+<!-- edit profile  -->
+<div class="row"> 
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8 well" style="padding-left: : 10%; font-size: 18px;">
+    <details>
+      <summary style="font-size: 20px;">Edit Profile</summary>
+      <br>
+      <form method = "post" action="/user/{{user.id}}/update_pic/" enctype="multipart/form-data"> 
+        {% csrf_token %}
+        <table>
+          <tr>
+            <td style=" max-width: 280px;"> {{ form.prof_pic }}</td>
+          </tr>
+        </table>
+      <p style="color: red;">* max file size 5MB </p>
+
+        <table style="margin-top: 10px;">
+          <tr>
+            <td style="max-width: 280px;"> <button type="submit">change profile picture</button> </td>
+          </tr>
+        </table>
+
+      </form>
+
+    <form action="/user/{{user.id}}/del_prof_pic/" method="POST" >
+        {% csrf_token %}
+       <button style="font-size: 18px; float: right;" type="submit" id="del_icon" class="btn btn-default btn-sm del_icon"> <span class="glyphicon glyphicon-trash" ></span> Remove picture  </button>
+    </form>
+
+    <form method = "post" action="/user/{{user.id}}/saveprofile/"> 
+      {% csrf_token %}
+
+    <h3>About</h3>
+    <textarea id="test1" name="bio"  rows="3" placeholder="write here">{{profile.bio}}</textarea>
+
+    <p>Full name <input id="test5" type="text" name="fullname" minlength="4" maxlength="25"  placeholder="write here" value="{{user.first_name}}"> </p>
+
+    <p>Lives in <input id="test2" type="text" name="livesin" placeholder="write here"
+      value="{{profile.livesin}}"> </p>
+    
+    <p>From  <input id="test3" type="text" name="hometown" placeholder="write here"
+      value="{{profile.hometown}}"> </p>
+    
+    <p>Studies/Working at <input id="test4" name="school" type="text" placeholder="write here"
+      value="{{profile.school}}"> </p>
+
+    <button type="submit" > Save </button>
+  </form>
+
+    <form action="/user/{{user.id}}/prof_del/" method="POST" >
+        {% csrf_token %}
+       <button style="font-size: 18px; float: right;" type="submit" id="del_icon" class="btn btn-default btn-sm del_icon"> <span class="glyphicon glyphicon-trash" ></span> Delete Profile </button>
+    </form>
+  </details>
+</div>
+  <div class="col-sm-2"></div>
+</div>
+
+<div class="row"> 
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8 well" style="padding: 4px; font-size: 18px;">
+    <h3  id="posts" style="text-align: center;">Posts</h3>
+
+    {% for st,islike  in status %}
+    <div id="status{{st.id}}" style="border: 1px solid black;  padding: 10px;">
+     <p > {{st.status|linebreaks }} </p>
+
+      {% if st.status_pic %}
+          <img src="{{ st.status_pic.url }}" style="width:400px; max-width: 100%; max-height: 400px; margin-bottom: 15px;">
+          <br>
+      {% endif %}
+      
+        <span  style="color: blue;" id="numlike{{st.id}}">{{ st.num_like }}</span>
+        <span  style="color: blue;"> likes </span>
+  {% if islike %}
+ <button class="likebutton blue" id="like{{st.id}}"  data-catid="{{ st.id }}">Liked</button>
+ {% else %}
+ <button class="likebutton" id="like{{st.id}}"  data-catid="{{ st.id }}">Like</button>
+  {% endif %}
+
+ <button class="delbtn" id="delbtn{{st.id}}"  data-catid="{{ st.id }}">Delete post</button>
+ <button class="all_liker" id="all_liker{{st.id}}"  data-catid="{{ st.id }}">who likes</button>
+
+  <div id="liker_list{{st.id}}" style="font-size: 16px; padding: 10px 5px 2px 15px;"></div>
+
+      </div>
+
+      <br id="statusbr{{st.id}}">  
+    {% endfor %}
+</div>
+
+  <div class="col-sm-2"></div>
+</div>
+
+<div class="row"> 
+  <div class="col-sm-2"></div>
+  <div class="col-sm-8 well" style="font-size: 18px;">
+
+<details>
+  <summary style="font-size: 20px;">update status</summary>
+
+    <form method = "post" action="/user/{{user.id}}/update_status/" enctype="multipart/form-data"> 
+      {% csrf_token %}
+      <br>
+      {{ status_form.status.errors }}
+      {{ status_form.status_pic.errors }}
+      {{ status_form.status }} <br>
+      {{ status_form.status_pic }}
+      <p style="color: red;">* max file size 5MB </p>
+      <button type="submit">update status</button>
+    </form>
+
+</details>
+
+</div>
+  <div class="col-sm-2">
+      <form method = "post" action="/user/{{user.id}}/email_send/"> 
+      {% csrf_token %}
+      <button type="submit"> send email</button>
+
+    </form>
+
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block jquery %}
+<script src="{% static '/js/profile.js' %}"></script>
+<script>
+$("#profile_id").attr("class", "btn btn-success topic")
+
+  $('.likebutton').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/likes/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        if ($('#like'+ catid).text() == "Like")
+           $('#like'+ catid).text("Liked")
+
+        else
+           $('#like'+ catid).text("Like");
+
+
+        $( '#like'+ catid ).toggleClass("blue");
+        $( '#numlike'+ catid ).text(data);
+      }
+   })
+});
+
+  $('.delbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/del_status/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+          $( '#status'+ catid ).remove();
+          $( '#statusbr'+ catid ).remove();
+      }
+   })
+});
+
+  $('.all_liker').click(function(){
+  var catid = $(this).attr("data-catid");
+  if ( $("#numlike" + catid).text() =="0"){
+        $("#liker_list" + catid).empty();
+    $("#all_liker"+catid).text("who likes");
+  }
+  else if( $("#liker_list" + catid).has("a").length){
+    $("#liker_list" + catid).empty();
+    $("#all_liker"+catid).text("who likes");
+  }
+  else{ 
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/find_all_liker/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+          for (var i = 0; i < data.length; i++) {
+            $("<a>" + data[i].who_like__first_name +"</a><br>").attr("href",
+              "/user/{{user.id}}/viewprofile/"+data[i].who_like).appendTo("#liker_list" + catid);
+          }
+        $("#all_liker"+catid).text("hide");
+
+      }
+   })
+ }
+});
+
+</script>
+{% endblock %}
+
+
+
+

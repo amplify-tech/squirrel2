@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Profile </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+  body{
+    font-size: 20px;
+    word-break: break-all; 
+    word-wrap: break-word;
+  }
+  form{
+    display: inline;
+    }
+  * {
+  box-sizing: border-box;
+  }
+.blue {
+  color: white;
+  background-color: blue;
+}
+  .col-container {
+  display: table;
+  width: 100%;
+  }
+  .col {
+  display: table-cell;
+  width: 50%;
+  }
+  input{
+  width: 250px;
+  border: 0;
+  background-color: #ffffe6;
+  }
+  .btn{
+  margin: 5px;
+  }
+
+@media only screen and (max-width: 600px) {
+  .col { 
+    display: block;
+    width: 100%;
+  }
+}
+  </style>
+</head>
+<body onload="changeurl()" >
+<div class="container-fluid">
+  <a class="btn btn-info" role="button" id="profile" href="">Home</a>
+<div class="row well" style="padding: 0;">
+<div class="col-sm-1">  </div>
+<div class="col-sm-5 well" style="text-align: center; padding: 7px;"> 
+
+     <div style="border: 1px solid black; padding-bottom: 7px;">
+      <h2 style="color: green"> {{whose_profile.owner.first_name}}   </h2>
+     {% load staticfiles %}
+
+      {% if pimages.prof_pic %}
+         <img src="{{ pimages.prof_pic.url }}" style="max-width:80%; max-height: 300px;" >
+      {% else %} 
+         <img src="{% static 'user.png' %}" alt="{{whose_profile.owner.first_name}}" style="width:40%">
+      {% endif %}
+
+      </div>
+      <div style="text-align: left;  padding-left: 15px;">
+      <p>Bio        :<b> {{whose_profile.bio}}  </b>		 </p>
+      <p>Lives in   :<b> {{whose_profile.livesin}}  </b>   </p>
+      <p>From       :<b> {{whose_profile.hometown}}  </b>  </p>
+      <p>Studies/working at :<b> {{whose_profile.school}}  </b>    </p>
+
+      <p>{{num_flwer}} followers &nbsp; &nbsp; | &nbsp; &nbsp;  {{num_flwing}} following</p>
+      </div>
+
+</div>
+
+<div class="col-sm-5 well" style="padding: 7px; font-size: 18px;"> 
+    <h3 style="text-align: center; color: blue;">Posts</h3>
+
+    {% for st,islike  in status %}
+    <div id="{{st.id}}" style="border: 1px solid black;  padding: 10px;">
+
+     <p > {{st.status|linebreaks }} </p>
+
+      {% if st.status_pic %}
+          <img src="{{ st.status_pic.url }}" style="width:400px; max-width: 100%; max-height: 400px; margin-bottom: 15px;">
+          <br>
+      {% endif %}
+      
+        <span  style="color: blue;" id="numlike{{st.id}}">{{ st.num_like }}</span>
+        <span  style="color: blue;"> likes </span>
+  {% if islike %}
+ <button class="likebutton blue" id="like{{st.id}}"  data-catid="{{ st.id }}">Liked</button>
+ {% else %}
+ <button class="likebutton" id="like{{st.id}}"  data-catid="{{ st.id }}">Like</button>
+  {% endif %}
+
+ <button class="all_liker" id="all_liker{{st.id}}"  data-catid="{{ st.id }}">who likes</button>
+
+  <div id="liker_list{{st.id}}"></div>
+
+
+      </div>
+
+      <br>  
+    {% endfor %}
+
+
+</div>
+<div class="col-sm-1">  </div>
+</div>
+</div>
+
+<script>
+  function changeurl() {
+  var mylink = window.location.href;
+  document.getElementById("profile").href=mylink.split("/viewprofile")[0];
+}
+</script>
+
+
+<script>
+  $('.likebutton').click(function(){
+  var catid = $(this).attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/likes/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        if ($('#like'+ catid).text() == "Like")
+           $('#like'+ catid).text("Liked")
+
+        else
+           $('#like'+ catid).text("Like");
+           $( '#likelist-'+ catid + "-"+ "{{user.id}}").remove();
+
+
+        $( '#like'+ catid ).toggleClass("blue");
+        $( '#numlike'+ catid ).text(data);
+      }
+   })
+});
+</script>
+<script>
+  $('.all_liker').click(function(){
+  var catid = $(this).attr("data-catid");
+  if ( $("#numlike" + catid).text() =="0"){
+        $("#liker_list" + catid).empty();
+    $("#all_liker"+catid).text("who likes");
+  }
+  else if( $("#liker_list" + catid).has("a").length){
+    $("#liker_list" + catid).empty();
+    $("#all_liker"+catid).text("who likes");
+  }
+  else{ 
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/find_all_liker/",
+      data:{
+               status_id: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+          for (var i = 0; i < data.length; i++) {
+            $("<a>" + data[i].who_like__first_name +"</a><br>").attr("href",
+              "/user/{{user.id}}/viewprofile/"+data[i].who_like).appendTo("#liker_list" + catid);
+          }
+        $("#all_liker"+catid).text("hide");
+
+      }
+   })
+ }
+});
+
+</script>
+</body>
+</html>

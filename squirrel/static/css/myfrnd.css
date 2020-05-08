@@ -1,0 +1,100 @@
+ body{ 
+    font-size: 22px;
+    word-break: break-all; 
+    word-wrap: break-word;
+  }
+  form{
+    display: inline;
+    }
+
+  input{
+    display: none;
+  }
+.blue {
+  color: white;
+  background-color: blue;
+}
+  .btn{
+  margin: 5px;
+  }
+  .badge{
+    background-color: #ff6666;
+  }
+ .btn .badge{
+  color: black;
+    background-color: yellow;
+    vertical-align: top;
+ }
+
+ 
+ .del_col{
+  width: 60px;
+ }
+ .chat_col{
+  width: 240px;
+ }
+ .not_col{
+  padding-left: 4px;
+  width: 25px;
+  padding-right: 4px;
+  vertical-align: middle;
+ }
+ .act_col{
+  padding: 0;
+  width: 30px;
+  vertical-align: middle;
+ }
+ button{
+  height: 40px;
+  font-size: 20px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+ }
+ .view_icon{
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+ }
+ .del_icon{
+  font-size: 22px;
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+  text-align: center;
+ }
+  .active_dot{  
+    width: 18px; 
+    height: 18px;
+    background-color: #00cc00; 
+    border-radius: 50%;"
+  }
+  .listing{
+    max-height: 500px;
+    overflow: auto;
+  }
+  .header{
+    background-color: #404040;
+    text-align: center;
+  }
+  .headicon{
+    font-size: 20px;
+  }
+  .header a{
+    font-size: 18px;
+  }
+  tr{
+    max-width: 100%;
+  }
+
+@media (max-width:550px) {
+  .topic {
+      font-size: 0px !important;
+  }
+  .btn .logout{
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+}  

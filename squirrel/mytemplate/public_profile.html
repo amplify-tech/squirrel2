@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> Profile </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+  body{
+    font-size: 20px;
+  }
+  form{
+    display: inline;
+    }
+  * {
+  box-sizing: border-box;
+  }
+
+  .col-container {
+  display: table;
+  width: 100%;
+  }
+  .col {
+  display: table-cell;
+  width: 50%;
+  }
+  input{
+  width: 250px;
+  border: 0;
+  background-color: #ffffe6;
+  }
+  .btn{
+  margin: 5px;
+  }
+
+@media only screen and (max-width: 600px) {
+  .col { 
+    display: block;
+    width: 100%;
+  }
+}
+  </style>
+</head>
+<body>
+<div class="well">
+  <a class="btn btn-info" role="button" id="profile" href="/">Home</a>
+  <div class="well" style="max-width: 600px; text-align: center;">
+    <div class="well">
+      <h2 style="color: green">           {{profiles.owner.first_name}}  				 </h2>
+          <img src="{% static 'user.png' %}" alt="{{user.username}}" style="width:40%">
+    </div>
+    <div class="well" style="text-align: left; padding-left: 5%;"> 
+      <p>Bio        <b> {{profiles.bio}}  </b>		 </p>
+      <p>Lives in   <b> {{profiles.livesin}}  </b>   </p>
+      <p>From       <b> {{profiles.hometown}}  </b>  </p>
+      <p>Studies/working at <b> {{profiles.school}}  </b>    </p>
+      <p>Status <b> {{profiles.status}}  </b>    </p>
+    </div>
+</div>
+  <p >You can see public profiles only </p>
+  <p style="color: blue;">You must login to follow</p>
+</div>
+
+
+</body>
+
+</html>

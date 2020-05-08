@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title> {% block title %} Home {% endblock title %} </title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script> 
+
+  {% block style %}  {% endblock style %}
+</head>
+
+<body>
+<div class="container-fluid">
+  <div class="row">
+<div class="col-sm-12 header">
+  <a class="btn btn-info topic" role="button" id="profile_id" href="/user/{{user.id}}"> <i class='fas fa-user-edit headicon'></i> Profile</a>
+  <a class="btn btn-info topic" role="button" id="chat_id" href="/user/{{user.id}}/chat/{{user.id}}"> <i class="fa fa-comments headicon"> </i> Chat</a>
+  <a class="btn btn-info topic" role="button" id="network_id" href="/user/{{user.id}}/myfrnd"> <i class="fa fa-users headicon"></i> Network <span class="badge" id="notify_id" >{{all_notify}}</span> </a>
+  <a class="btn btn-info topic" role="button" id="explore_id" href="/user/{{user.id}}/findfrnd"> <i class='fas fa-globe-americas headicon'></i> Explore </a>
+
+</div>
+</div>
+    {% block content %}
+
+    {% endblock %}
+<br><br>
+    <footer style="text-align: center; width: 100%;font-size: 18px;  font-style: italic; word-break: normal;">
+      <a href="/public/" target="_blank">How to use </a> |
+      <a href="/user/{{user.id}}/viewprofile/2">Help Desk </a> |
+      <a href="/user/{{user.id}}/viewprofile/1"> Founder & CEO</a> |
+      <span>&#169; 2020 Squirrel Product </span> |
+      <a href="/logout" style="color: red;"> Logout </a>
+    </footer>
+
+</div>
+<br>
+{% block jquery %}
+
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Chat {% endblock %}
+{% block style %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
+  <style>
+  .msz_time{
+    font-size: 12px;
+    color: green;
+  }
+  .msz{
+    font-size: 18px;
+    max-width: 80%;
+  }
+  .wholechat{
+    height: 350px;
+  }
+  .chat_table{
+    width: 100%;
+  }
+  .chat_table tr {
+    width: 100%;
+  }
+@media (max-width:600px) {
+  .wholechat{
+    height: 280px;
+  }
+}
+  </style>
+
+ {% endblock %}
+
+{% block content %} 
+
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-5 well" style="padding-top: 0;">
+
+    <div style="background-color: orange;height: 34px; padding-left: 5px; text-align: center;" id="heading">
+      {% if user.id ==  rcvr.id %}
+
+      <h2> <a href="/user/{{user.id}}/viewprofile/{{rcvr.id}}">To Yourself</a>
+
+    <button class="delbtn" style="float: right; height: 34px;" data-catid="{{chat_key}}">
+    <span class="glyphicon glyphicon-trash" style="font-size: 20px;"></span></button>
+    </h2>
+   
+      {% else %}
+      <h2> <a href="/user/{{user.id}}/viewprofile/{{rcvr.id}}">
+      {{rcvr.first_name | slice:"0:15"}}</a>
+
+    <button class="delbtn" style="float: right; height: 34px;" data-catid="{{chat_key}}">
+    <span class="glyphicon glyphicon-trash" style="font-size: 20px;"></span></button>
+    </h2>
+
+      {% endif %}
+    </div>
+    <div id="outchaat" class="wholechat">
+      <table id="chat_table" class="chat_table">
+        {% if user.id ==  rcvr.id %}
+        <tr>
+      <p class="msz incoming" style="word-wrap: normal; word-break: normal;"> Hello!<br>
+        here you can message yourself. <br>
+        To start a chat with others -<br>
+        Follow someone from explore page.<br>
+        Select someone from followers/following list from the network page.<br>
+        Start a chat &#128522; <br>
+      <a href="/user/{{user.id}}/viewprofile/1" style="font-size: 16px;"> --help desk</a>
+
+      </p>
+        </tr>
+        {% endif %}
+      </table>
+    </div>
+
+<div>
+    <textarea  cols="20" rows="1"  id="frndmsz" autofocus="True"
+    placeholder="write a msz here" name="mymsz" style="width: 75%;"></textarea>
+
+    <button class="sendbtn" id="sendbtn"  data-catid=0>Send</button>
+<br>
+    <button onclick="insertemoji(128512)"> &#128517;</button>
+    <button onclick="insertemoji(127748)"> &#128076;</button>
+    <button onclick="insertemoji(127847)">  &#127873;</button>
+    <button onclick="insertemoji(127960)"> &#127828;</button>
+    <button onclick="insertemoji(128049)">   &#128077;</button>
+    <button onclick="hide_emoji()" >hide</button>
+        
+    <div id="bdadiv" style="max-width: 100%; width: 450px; margin-top: 8px;">
+        <div id="emojidiv"></div>
+    </div>
+
+</div>
+</div>
+  <div class="col-sm-4"></div>
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+{% endblock %}
+{% block jquery %}
+<script>
+  function insertemoji(num) {
+    var bdadiv1 = document.getElementById("bdadiv");
+    var mydiv = document.getElementById("emojidiv");
+    mydiv.remove();
+    var newdiv = document.createElement("div");
+    newdiv.setAttribute("id", "emojidiv");
+    bdadiv.appendChild(newdiv);
+
+    for (var i = num; i < num+40; i++) {
+        var mybtn = document.createElement("button");
+        mybtn.innerHTML = "&#" + i + ";"
+        mybtn.setAttribute("onclick", "sendemoji(this)")
+        newdiv.appendChild(mybtn);
+    }
+   }
+   function sendemoji(button) {
+    var themszzz = document.getElementById("frndmsz");
+    themszzz.value = themszzz.value + button.innerHTML;
+    } 
+
+function hide_emoji(){
+    var bdadiv1 = document.getElementById("bdadiv");
+    var mydiv = document.getElementById("emojidiv");
+    mydiv.remove();
+    var newdiv = document.createElement("div");
+    newdiv.setAttribute("id", "emojidiv");
+    bdadiv.appendChild(newdiv);
+}
+
+</script>
+
+<script>
+  $('.delbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+ $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/chat_del/{{rcvr.id}}",
+      data:{
+               chate_key_del: catid
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+        $('#chat_table').empty(); 
+        $("#sendbtn").attr("data-catid",0);
+      }
+   })
+});
+</script>
+
+<script>
+
+  $('.sendbtn').click(function(){
+  var catid = $(this).attr("data-catid");
+  var newmsz = $("#frndmsz").val();
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/send_msz/",
+      data:{
+               last_msz_id: catid,
+               mymsz: newmsz,
+               chat_key: "{{chat_key}}",
+               rcvr_id: "{{rcvr_id}}"
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        for (var i = 0; i < data.length; i++) {
+
+          var newrow = $("<tr> </tr>");
+          var themsz = $("<p>" + data[i].msz +"</p>");
+          var itstime = $("<br><span>--" + data[i].date +"</span>").addClass("msz_time");
+
+      if(data[i].sender_id == "{{user.id}}"){ themsz.attr("class", "msz outgoing");}
+      else{ themsz.attr("class", "msz incoming"); }
+
+          itstime.appendTo(themsz);
+          themsz.appendTo(newrow);
+          newrow.appendTo("#chat_table");
+
+        }
+
+        var x = data[data.length-1].id
+        $("#sendbtn").attr("data-catid",x);
+        $("#frndmsz").val("");
+
+      $('.wholechat ').animate({scrollTop: $('.wholechat')[0].scrollHeight}, 'slow');
+       window.scrollTo(0, $('#heading').offset().top );
+      }
+   })
+});
+  
+</script>
+<script>
+
+function fetchdata(tt=500){
+  var catid = $("#sendbtn").attr("data-catid");
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/check_msz/",
+      data:{
+               last_msz_id: catid,
+               chat_key: "{{chat_key}}",
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        for (var i = 0; i < data.length; i++) {
+    
+          var newrow = $("<tr> </tr>");
+          var themsz = $("<p>" + data[i].msz +"</p>");
+          var itstime = $("<br><span>--" + data[i].date +"</span>").addClass("msz_time");
+
+      if(data[i].sender_id == "{{user.id}}"){ themsz.attr("class", "msz outgoing");}
+      else{ themsz.attr("class", "msz incoming"); }
+
+          itstime.appendTo(themsz);
+          themsz.appendTo(newrow);
+          newrow.appendTo("#chat_table");
+        }
+
+        var x = data[data.length-1].id;
+        $("#sendbtn").attr("data-catid",x);
+        if(data.length!=0){
+          $('.wholechat ').animate({scrollTop: $('.wholechat')[0].scrollHeight}, tt);
+        }
+      }
+   })
+}
+
+$("#chat_id").attr("href", "/user/{{user.id}}/chat/{{rcvr.id}}")
+$("#chat_id").attr("class", "btn btn-success topic")
+$("footer").hide();
+fetchdata(0);
+
+if ("{{user.id}}" !=  "{{rcvr.id}}") {
+  setInterval(fetchdata, 8000)
+}
+</script>
+
+{% endblock %}

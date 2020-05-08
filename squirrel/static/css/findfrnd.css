@@ -1,0 +1,66 @@
+  body{ 
+    font-size: 22px;
+  }
+  form{
+    display: inline;
+    }
+ button{
+  height: 40px;
+ }
+  .followbtn {
+    color: white;
+    background-color: blue;
+  }
+  .unfollowbtn {
+    color: black;
+  }
+  .btn{
+  margin: 5px;
+  }
+  .badge{
+    background-color: #ff6666;
+  }
+ .btn .badge{
+  color: black;
+    background-color: yellow;
+    vertical-align: top;
+ }
+  .header{
+    background-color: #404040;
+    text-align: center;
+  }
+  .headicon{
+    font-size: 20px;
+  }
+  .header a{
+    font-size: 18px;
+  }
+
+@media (max-width:600px) {
+  .topic {
+      font-size: 0px !important;
+  }
+  .btn .logout{
+    font-size: 14px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+  }
+} 
+.view_col{
+  width: 50px;
+} 
+.name_col{
+  width: 250px;
+    word-break: break-all; 
+    word-wrap: break-word;
+}
+.fol_col{
+  width: 80px;
+}
+ .view_icon{
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+  padding: 2px;
+ }
