@@ -21,5 +21,4 @@ urlpatterns = [
     path('<user_id>/delete_flwing/', views.delete_flwing, name='delete_flwing'),
     path('<user_id>/delete_flwer/', views.delete_flwer, name='delete_flwer'),
     path('<user_id>/viewprofile/<ricvr_id>', views.viewprofile, name='viewprofile'),
-    path('<user_id>/email_send/', views.email_send, name='email_send'),
 ]

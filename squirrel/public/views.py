@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.models import User, auth
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from . import models
 from user.models import *
-from login.models import *
-import re, csv
 from datetime import datetime
 import pytz
 from django.db.models import Q
@@ -27,20 +26,27 @@ def thatperson(request,  user_id=None):
 	if len(who)!=0:
 		srchprsn = who[0]
 		myprofile = profile.objects.get(owner = srchprsn)
-		return render(request, 'public_profile.html', {'name': srchprsn.fullname, 'profiles': myprofile}) 
+		return render(request, 'public_profile.html', {'profiles': myprofile}) 
 	else:
 		return HttpResponse("<h2> url not exist ! </h2> <p> May be this profile is private and you need to Login! </p>")
  
-
 
 def search(request):
 	Alluser = User.objects.all()
 	num = len(Alluser)
 	name = request.POST['fname']
-	prsnid = request.POST['prsnid']
-	if len(prsnid) != 0:
-		return redirect('/public/' + prsnid)
-	elif len(name) != 0:
+	if len(name) <1:
+		response = {"status":0, "url":"/", "msz":"atleast 1 character required"}
+	elif len(name) >15:
+		response = {"status":0, "url":"/", "msz":"maximum 15 characters"}
+	elif not name.isalnum():
+		response = {"status":0, "url":"/", "msz":"only alphanumeric characters allowed"}
+	elif name.isnumeric() :
+		newurl = '/public/' + name 
+		response = {"status":1, "url":newurl, "msz":"id found,ok"}
+	elif len(name) <3:
+		response = {"status":0, "url":"/", "msz":"atleast 3 character required"}
+	else:
 		query = Q(fullname__icontains=name)
 		query.add(Q(bio__icontains=name), Q.OR)
 		query.add(Q(school__icontains=name), Q.OR)
@@ -50,10 +56,21 @@ def search(request):
 		profilelist = profile.objects.all().filter(query)
 
 		if len(profilelist)==0:
-			messages.info(request, 'Person with this info not found')
-			return render(request, 'home.html' , {'numuser' : num})
+			response = {"status":0, "url":"/", "msz":"Person with this info not found"}
 		else:
-			return render(request, 'public_home.html', {'profilelist': profilelist}) 
-	else:
-		return render(request, 'home.html' , {'numuser' : num})
+			newurl= "/public/filter_search/" + name
+			response = {"status":1, "url":newurl, "msz":"profile found. ok. redirecting."}
+	return JsonResponse(response, safe=False)
 
+def filter_search(request, thename=None):
+	if thename==None:
+		redirect("/")
+	else:
+		query = Q(fullname__icontains=thename)
+		query.add(Q(bio__icontains=thename), Q.OR)
+		query.add(Q(school__icontains=thename), Q.OR)
+		query.add(Q(hometown__icontains=thename), Q.OR)
+		query.add(Q(livesin__icontains=thename), Q.OR)
+
+		profilelist = profile.objects.all().filter(query)
+		return render(request, 'public_home.html', {'profilelist': profilelist}) 

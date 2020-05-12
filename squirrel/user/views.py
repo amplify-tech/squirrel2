@@ -14,8 +14,6 @@ import pytz
 from .forms import *
 from django.db.models import Q
 import string  
-from django.core.mail import send_mail
-from django.conf import settings
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
@@ -24,15 +22,8 @@ allpunc = string.punctuation
 tz = pytz.timezone('Asia/Kolkata')
 
 def dashboard(request,  user_id=None):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
             user = request.user
             myprofile = profile.objects.get(owner = user)
             total_notify = myprofile.all_notify
@@ -51,86 +42,67 @@ def dashboard(request,  user_id=None):
                     'all_notify':total_notify}
             return render(request, 'profile.html', context) 
 
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
-
-
-
+    return redirect("/")
 
 def chat(request,  user_id=None , ricvr_id=None) :
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
+            user = request.user
+            myprofile = profile.objects.get(owner = user)
+           
+            if int(ricvr_id) == int(user_id):
 
-    elif request.user.is_authenticated:
-        user = request.user
-        myprofile = profile.objects.get(owner = user)
-       
-        if int(ricvr_id) == int(user_id):
+                total_notify = myprofile.all_notify
+                thischat_key= str(user_id+"@"+user_id)
+                oldchat = Chate.objects.all().filter(chatkey=thischat_key)
 
-            total_notify = myprofile.all_notify
-            thischat_key= str(user_id+"@"+user_id)
-            oldchat = Chate.objects.all().filter(chatkey=thischat_key)
+                context = {'ourchat': oldchat ,'rcvr': user,
+                'rcvr_id':user.id, 'all_notify':total_notify, 'chat_key':thischat_key}
+                return render(request, 'chat.html', context)
 
-            context = {'ourchat': oldchat ,'rcvr': user,
-            'rcvr_id':user.id, 'all_notify':total_notify, 'chat_key':thischat_key}
-            return render(request, 'chat.html', context)
+            else:
+                # now he is reading msz so remove some notification
 
-        else:
-            # now he is reading msz so remove some notification
+                ricvr = User.objects.get(id=int(ricvr_id))
+                thischat_key =  str(min(user.id, int(ricvr_id))) + "@" + str(max(user.id, int(ricvr_id)))
 
-            ricvr = User.objects.get(id=int(ricvr_id))
-            thischat_key =  str(min(user.id, int(ricvr_id))) + "@" + str(max(user.id, int(ricvr_id)))
+                oldchat = Chate.objects.all().filter(chatkey=thischat_key)
 
-            oldchat = Chate.objects.all().filter(chatkey=thischat_key)
+                # notifiction  --n     ********************************
+                n1 = 0
+                n2 = 0 
+                # following
+                flwing = User_Following.objects.all().filter(user_id=user.id, following=ricvr)
+                if len(flwing) != 0:
+                    flwing1 = flwing[0]
+                    n1 = flwing1.notification
+                    flwing1.notification = 0
+                    flwing1.save()
 
-            # notifiction  --n     ********************************
-            n1 = 0
-            n2 = 0 
-            # following
-            flwing = User_Following.objects.all().filter(user_id=user.id, following=ricvr)
-            if len(flwing) != 0:
-                flwing1 = flwing[0]
-                n1 = flwing1.notification
-                flwing1.notification = 0
-                flwing1.save()
+                # followers
+                flwer = User_Follower.objects.all().filter(user_id=user.id, follower=ricvr)
+                if len(flwer) != 0:
+                    flwer1 = flwer[0]
+                    n2 = flwer1.notification
+                    flwer1.notification = 0
+                    flwer1.save()
 
-            # followers
-            flwer = User_Follower.objects.all().filter(user_id=user.id, follower=ricvr)
-            if len(flwer) != 0:
-                flwer1 = flwer[0]
-                n2 = flwer1.notification
-                flwer1.notification = 0
-                flwer1.save()
+                # all notify**********************
+                myprofile.all_notify = myprofile.all_notify - max(n1, n2)   #hopefully n1=n2
+                myprofile.save()
 
-            # all notify**********************
-            myprofile.all_notify = myprofile.all_notify - max(n1, n2)   #hopefully n1=n2
-            myprofile.save()
+                total_notify2 = myprofile.all_notify
+                # **************************************************
+                context = {'ourchat': oldchat ,'rcvr': ricvr,
+                'rcvr_id':ricvr_id, 'all_notify':total_notify2, 'chat_key':thischat_key}
+                return render(request, 'chat.html', context)
+    
+    return redirect("/")
 
-            total_notify2 = myprofile.all_notify
-            # **************************************************
-            context = {'ourchat': oldchat ,'rcvr': ricvr,
-            'rcvr_id':ricvr_id, 'all_notify':total_notify2, 'chat_key':thischat_key}
-            return render(request, 'chat.html', context)
-    else:
-        messages.info(request, 'Please Login First')
-        return render(request, 'login.html')
 
 def myfrnd(request,  user_id=None) :
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
             user = request.user
             myprofile = profile.objects.get(owner = user)
             total_notify = myprofile.all_notify
@@ -163,20 +135,12 @@ def myfrnd(request,  user_id=None) :
                         'all_notify':total_notify, 'status':status_likelist_islike}
 
             return render(request, 'myfrnd.html', context)
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+    
+    return redirect("/")
 
 def findfrnd(request,  user_id=None) :
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
             user = request.user
             myprofile = profile.objects.get(owner = user)
             total_notify = myprofile.all_notify
@@ -187,9 +151,8 @@ def findfrnd(request,  user_id=None) :
                  #remove those are already  following
             all_users = all_users.order_by('first_name')
             return render(request, 'findfrnd.html', {'alluser': all_users, 'all_notify':total_notify})
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+
+    return redirect("/")
 
 def saveprofile(request,user_id=None ):
     print("start saveprofile")
@@ -215,131 +178,76 @@ def saveprofile(request,user_id=None ):
     return redirect('/user/' +str(request.user.id))
 
 def following(request,user_id=None ):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.all().filter(owner = request.user)[0]
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
-            user = request.user
-            ideal_user_id = request.POST['idealid']
-            ideal_user = User.objects.get(id=int(ideal_user_id))
+    user = request.user
+    ideal_user_id = request.POST['idealid']
+    ideal_user = User.objects.get(id=int(ideal_user_id))
 
-            # following **************************************************
-            newflwing = User_Following(user_id = user.id, following = ideal_user, notification=0)
-            newflwing.save()
-            
-            # # follower ***************************************************
-            newflwr = User_Follower(user_id = ideal_user.id, follower = user, notification=0)
-            newflwr.save()
+    # following **************************************************
+    newflwing = User_Following(user_id = user.id, following = ideal_user, notification=0)
+    newflwing.save()
 
-            return HttpResponse("success")
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+    # # follower ***************************************************
+    newflwr = User_Follower(user_id = ideal_user.id, follower = user, notification=0)
+    newflwr.save()
+
+    return HttpResponse("success")
 
 
 def delete_flwing(request,user_id=None ):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
-            user = request.user
-            myprofile = profile.objects.get(owner = user)
-            whom = request.POST['idealid']
-            his_profile = profile.objects.get(owner = int(whom))
+    user = request.user
+    myprofile = profile.objects.get(owner = user)
+    whom = request.POST['idealid']
+    his_profile = profile.objects.get(owner = int(whom))
 
-            flwinglist = User_Following.objects.filter(user_id=user.id, following=int(whom))
-            if len(flwinglist) !=0:
-                myprofile.all_notify =myprofile.all_notify -  flwinglist[0].notification
-                flwinglist.delete()
+    flwinglist = User_Following.objects.filter(user_id=user.id, following=int(whom))
+    if len(flwinglist) !=0:
+        myprofile.all_notify =myprofile.all_notify -  flwinglist[0].notification
+        flwinglist.delete()
 
-            flwerlist = User_Follower.objects.filter(user_id=int(whom), follower=user.id)
-            if len(flwerlist) !=0:
-                his_profile.all_notify =his_profile.all_notify -  flwerlist[0].notification
-                flwerlist.delete()
+    flwerlist = User_Follower.objects.filter(user_id=int(whom), follower=user.id)
+    if len(flwerlist) !=0:
+        his_profile.all_notify =his_profile.all_notify -  flwerlist[0].notification
+        flwerlist.delete()
 
-            myprofile.save()
-            his_profile.save()
+    myprofile.save()
+    his_profile.save()
 
-            return HttpResponse("success")
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+    return HttpResponse("success")
 
 def delete_flwer(request,user_id=None ):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
-            user = request.user
-            whom = request.POST['flwer_del_id']
+    user = request.user
+    whom = request.POST['flwer_del_id']
 
-            myprofile = profile.objects.get(owner = user)
-            his_profile = profile.objects.get(owner = int(whom))
+    myprofile = profile.objects.get(owner = user)
+    his_profile = profile.objects.get(owner = int(whom))
 
-            flwerlist = User_Follower.objects.filter(user_id=user.id, follower=int(whom))
-            if len(flwerlist) !=0:
-                myprofile.all_notify =myprofile.all_notify -  flwerlist[0].notification
-                flwerlist.delete()
+    flwerlist = User_Follower.objects.filter(user_id=user.id, follower=int(whom))
+    if len(flwerlist) !=0:
+        myprofile.all_notify =myprofile.all_notify -  flwerlist[0].notification
+        flwerlist.delete()
 
-            flwinglist = User_Following.objects.filter(user_id=int(whom), following=user.id)
-            if len(flwinglist) !=0:
-                his_profile.all_notify =his_profile.all_notify -  flwinglist[0].notification
-                flwinglist.delete()
+    flwinglist = User_Following.objects.filter(user_id=int(whom), following=user.id)
+    if len(flwinglist) !=0:
+        his_profile.all_notify =his_profile.all_notify -  flwinglist[0].notification
+        flwinglist.delete()
 
-            myprofile.save()
-            his_profile.save()
+    myprofile.save()
+    his_profile.save()
 
-            return HttpResponse("success")
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+    return HttpResponse("success")
 
 
 def chat_del(request,user_id=None,  ricvr_id=None):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
-            user = request.user
-            thischat_key = request.POST['chate_key_del']
+    user = request.user
+    thischat_key = request.POST['chate_key_del']
 
-            Chate.objects.all().filter(chatkey = thischat_key).delete()
+    Chate.objects.all().filter(chatkey = thischat_key).delete()
 
-            return HttpResponse("success")
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+    return HttpResponse("success")
 
-def prof_del(request,user_id=None,  ricvr_id=None):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.get(owner = request.user)
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
+def prof_del(request,user_id=None):
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
             user = request.user
             profile.objects.all().filter(owner = user).delete()
             Chate.objects.all().filter(sender= user).delete()
@@ -352,21 +260,14 @@ def prof_del(request,user_id=None,  ricvr_id=None):
             User.objects.all().filter(id= user.id).delete()
 
             return render(request, 'home.html')
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+
+    return redirect("/")
 
 
 def viewprofile(request,user_id=None, ricvr_id=None ):
-    if int(user_id) != request.user.id:
-        myprofile = profile.objects.all().filter(owner = request.user)[0]
-        myprofile.isactive = False
-        myprofile.save()
-        auth.logout(request)
-        messages.info(request, 'you entered wrong url')
-        return render(request, 'login.html')
-    else:
-        if request.user.is_authenticated:
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
+
             user = request.user
             # who_id = request.POST['userid_view']
             whose_user = User.objects.get(id=int(ricvr_id))
@@ -382,13 +283,11 @@ def viewprofile(request,user_id=None, ricvr_id=None ):
             num_flwer= User_Follower.objects.all().filter(user_id=int(ricvr_id)).count()
 
             return render(request, 'viewprofile.html' , {'whose_profile' :whose_profile, 'status':status_likelist_islike, 'pimages':pictures, 'num_flwing':num_flwing, 'num_flwer':num_flwer})
-        else:
-            messages.info(request, 'Please Login First')
-            return render(request, 'login.html')
+
+    return redirect("/")
 
 
 def send_msz(request,user_id=None):
-
     user = request.user
     last_msz_id = request.POST['last_msz_id']
     curmsz = request.POST['mymsz']
@@ -455,7 +354,6 @@ def send_msz(request,user_id=None):
     return JsonResponse(after_chat, safe=False)
 
 def check_msz(request,user_id=None):
-
     last_msz_id = request.POST['last_msz_id']
     chat_key = request.POST['chat_key']
 
@@ -550,34 +448,8 @@ def del_prof_pic(request, user_id=None):
     return redirect('/user/' +str(request.user.id))
 
 
-def email_send(request, user_id=None):
-    print("email sending")
-    user=request.user
-    otp = str((user.id *7124587)%987267)
-    print(otp)
-    subject = "Email Address Verification for Squirrel"
-    str1 = "Hello " + str(user.first_name)
-    str2 = "\n your OTP for email verification on Squirrel is" 
-    str3 = "\n OTP : " + otp 
-    str4 = "\n user id : " + str(user.id) 
-    str5 = "\n email :" + str(user.email)
-    str6 = "\n \n Thank you for using Squirrel \n Squirrel Team \n \n https://squirrel.pythonanywhere.com/"
 
-    message =  str1 + str2 + str3 + str4 + str5 + str6
-
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [str(user.email),]
-    print("mail ready")
-    try:
-        send_mail( subject, message, email_from, recipient_list )
-        print("email sent")
-        return redirect('/public/')
-    except Exception:
-        print("there is some problem in sending mail")
-        return redirect('/user/' +str(request.user.id))
-
-
-# imp ++++++++++++++**********++++++++++
+# imp ++++++++++++++++++++++++********************************
 # id = 'some identifier'
 # person, created = Person.objects.get_or_create(identifier=id)
 

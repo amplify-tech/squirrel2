@@ -1,11 +1,12 @@
 from django.db import models
 # from django.contrib.auth.admin import User
-from myuser.models import User
-from myuser.models import UserManager
+# from myuser.models import User
+# from myuser.models import UserManager
 
 from datetime import datetime
 from django.core.exceptions import ValidationError
-
+from django.contrib.auth import get_user_model
+User = get_user_model()
 # Create your models here.
 
 def validate_file_size(value):

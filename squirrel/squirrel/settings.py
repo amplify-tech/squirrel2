@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'myuser.apps.MyuserConfig',
     'public.apps.PublicConfig',
     'user.apps.UserConfig',
-    'login.apps.LoginConfig',
+    'verify.apps.VerifyConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'squirrel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sqrldata10',
+        'NAME': 'sqrldata3',
         'USER':'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',
@@ -112,8 +112,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'akramkhanjnv@gmail.com'
-EMAIL_HOST_PASSWORD = 'kmtsmovmvzwiezcz'
+EMAIL_HOST_USER = 'squirrel.team2020@gmail.com'
+EMAIL_HOST_PASSWORD = 'vrofwyddglodntgp'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

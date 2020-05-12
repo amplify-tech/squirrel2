@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Home</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+body{
+	padding: 0;
+	margin: 0;
+	background: #1a66ff;
+	font-size: 18px;
+}
+nav{
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	font-size: 32px;
+	color: yellow;
+	text-align: center;
+	padding: 6px;
+}
+footer{
+	background-color: white;
+	text-align: center; color: black;
+	width: 100%;
+	line-height: 1.6;
+	font-style: italic;
+}
+footer div{
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  padding-bottom: 20px;
+}
+footer div a{
+	color: blue;
+	white-space: nowrap;
+}
+.otpdiv{
+	word-wrap: normal;
+	line-height: 1;
+	background-color: #b3ffff;
+	text-align: right;
+	font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	max-width: 380px;
+	min-height: 200px;
+	padding-top: 30px;
+	padding-right: 30px;
+	padding-left: 30px;
+	padding-bottom: 20px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.otpdiv button{
+	width: 70%;
+	cursor: pointer;
+	min-width: 100px;
+	font-size: 20px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	align-self: left;
+}
+.otpdiv input{
+	width: 70%;
+	font-size: 20px;
+}
+  @media (max-width:600px) {
+  	.otpdiv{
+  		width: 80%;
+  		margin-left: auto;
+  		margin-right: auto;
+		padding-right: 20px;
+		padding-left: 20px;
+  	}
+}
+</style> 
+
+</head>
+<body>
+<nav> Squirrel</nav>
+<h2 style="text-align: center; color: white;">Enter the OTP sent to your registered email</h2>
+	<div class="otpdiv">
+    <form action="{{action}}" method="POST">
+        {% csrf_token %}
+        <span>OTP : </span> 
+        <input type="number" placeholder="6 digit OTP" name="num"
+         minlength="6" maxlength="6" autofocus required> <br><br>
+        <button  type="submit"> Verify </button> <br>
+		<div>
+			{% for message in messages %}
+			<p style="text-align: center;font-size: 20px;color:rgb(121, 4, 4);">
+			{{message}}
+			</p>
+			{% endfor %}
+		</div>
+	</form>
+	<br>
+	<a href="{{action2}}"> Didn't get OTP ? </a>
+
+	</div>
+<br><br><br><br><br><br><br><br><br><br><br><br>
+<footer>
+  <div>
+  <a href="/public/" target="_blank">How to use </a> &nbsp; | &nbsp;
+  <a href="/public/2">Help Desk </a> &nbsp; | &nbsp;
+  <a href="/public/1"> Founder & CEO</a> &nbsp; | &nbsp;
+  <span>&#169; 2020 Squirrel Product </span>
+  <br></div>
+</footer>
+
+</body>
+</html>

@@ -2,94 +2,412 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Home</title>
+	<title>Home</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <link href="{% static 'icon.jpg' %}" rel="icon">
   <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
-
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style>
-  body{ 
-    font-size: 18px;
-  }
-  .header{
-    background-color: #404040;
-    text-align: center;
-  }
-  .header a{
-    font-size: 18px;
-  }
-  .btn{
-  margin: 5px;
-  }
-@media (max-width:600px) {
-   .btn{
-  margin: 2px;
-  }
-   .header a{
-    font-size: 16px;
-  }
+body{
+	padding: 0;
+	margin: 0;
+	background: linear-gradient(to bottom right, #0066ff 0%, #ff33cc 100%);
+	font-size: 18px;
+}
+nav{
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	font-size: 32px;
+	color: yellow;
+	text-align: center;
+}
+footer{
+	background-color: white;
+	text-align: center; color: black;
+	width: 100%;
+	font-style: italic;
+}
+footer div{
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  line-height: 1.6;
+  padding-bottom: 20px;
+}
+footer div a{
+  color: blue;
+  white-space: nowrap;
+}
 
-}  
+img{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.form{
+	line-height: 0.2;
+	background-color: #b3ffff;
+	text-align: left;
+	font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 0;
+	width: 50%;
+	max-width: 400px;
+  min-height: 310px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.search{
+/*	line-height: 0.5;*/
+  /*word-break: break-all; */
+  word-wrap: break-word;
+	background-color: #ffb3ff;
+	text-align: center;
+	font-size: 20px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+	width: 50%;
+	max-width: 400px;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.search button{
+	font-size: 22px;
+	width: 80%;
+	color: white;
+	padding: 8px;
+	background-color: #884dff;
+}
+.form input, .search input{
+	font-size: 20px;
+	width: 80%;
+}
+
+.login, .register {
+  background-color: white;
+  border: none;
+  padding: 12px 2px;
+  text-align: center;
+  font-size: 18px;
+  cursor: pointer;
+  width: 50%;
+  display: inline-block;
+}
+.active{
+	background-color: #009900;
+	color: white;
+}
+.submit_type{
+	background-color: #009900;
+	color: white;
+	font-size: 20px;
+	width: 100%;
+	cursor: pointer;
+	padding: 12px 2px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+	display: inline-block;
+	}
+.login_div, .reg_div{
+	padding: 10px;
+}
+#hide_pswd{
+	font-size: 24px;
+}
+#msz_name, #msz_pswd, #msz_email{
+  color: #ff4d4d;
+  font-size: 16px;
+}
+  #otpmsz{
+  color: #ff4d4d;
+  font-size: 18px;
+  margin: 10px;
+}
+
+ .otpbtn, .change_email{
+  cursor: pointer;
+  width: 40%;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px 2px;
+ }
+ .otp_div{
+  line-height: 1.2;
+  text-align: center;
+  padding: 15px 10px 15px 10px;
+ }
+ .info{
+  text-align: left;
+  line-height: 1.2;
+  font-size: 18px;
+  padding: 8px;
+ }
+ .errormsz{
+  text-align: left;
+  font-size: 20px;
+  color:rgb(121, 4, 4);
+}
+
+  @media (max-width:600px) {
+  	.form, .search{
+  		margin-left: auto;
+  		margin-right: auto;
+  		width: 90%;
+  	}
+	.form input, .search input{
+	 	font-size: 22px;
+	 }
+ }
 
 </style>
-
 </head>
 
-<body  onload="changeurl()">
-<div class="container-fluid">
-  <div class="row">
-<div class="col-sm-12 header">
-  <a style="font-size: 28px; float: left; vertical-align: middle; "> <b>Squirrel</b></a>
-  <a class="btn btn-success" role="button" id="homeid">Home</a>
-  <a class="btn btn-info" role="button" id="loginid" href="">Login</a>
-  <a class="btn btn-info" role="button" id="register" href="">Register</a>
+<body>
+<nav> Squirrel</nav>
+<div style="text-align: center;height: 100%;"><br>
+<img src="{% static 'icon.jpg' %}" style=" width: 80%; max-width: 150px;">
+<img src="{% static 'icon.jpg' %}" style=" width: 80%; max-width: 150px;"><br>
+<h2 id="heading" style="color: white;" >{{numuser}} Registered users</h2>
 </div>
+
+<div class="form">
+<button class="login active"> Login </button><button class="register"> Register </button>
+
+<div class="login_div">
+  <form action="/login/" method="POST"> 
+      {% csrf_token %}
+
+  <p>Email </p><input type="email" placeholder="email" name="email_login" minlength="5" maxlength="40" required ><br>
+  <p>Password <span class="hide_pswd">&#128065;</span> </p> <input type="password" placeholder="Password" class="pswd" name="pswd_login"  maxlength="30" required>
+  <br><br>
+  <button class="submit_type" type="submit" >Login</button>
+
+    <div class="errormsz">
+      {% for message in messages %}
+        <p>{{message}}</p>
+      {% endfor %}
+    </div>
+
+  </form>
+
 </div>
-  <div class="row">
-<div class="col-sm-2"></div>
-<div class="col-sm-8 well" style="padding-left: 10%;">
-<h2>{{numuser}} Registered users</h2>
-    <img src="{% static 'icon.jpg' %}" style=" width: 80%; max-width: 150px; float: right; margin-bottom: 10px;">
+
+<div class="reg_div" style="display: none;">
+  <p>Full name <span id="msz_name"></span> </p> 
+  <input type="text" placeholder="Full name" pattern="([A-z0-9À-ž\s]){2,}" id="fullname">
+  
+  <p>Email  <span id="msz_email"></span></p>
+  <input type="email" placeholder="email" id="email_reg"> 
+
+  <p>Password  <span class="hide_pswd">&#128065;</span> </p>
+  <input  type="password" placeholder="Password" class="pswd" id="pswd_reg">
+  <p id="msz_pswd"></p>
+
+  <p>Confirm Password </p>
+  <input  type="password" placeholder="Password" class="pswd" id="pswd_reg_1"> 
+  <br><br>
+  <button class="submit_type" id="register_me" > Register </button>
+</div>
+
+<div class="otp_div" style="display: none;">
+  <button class="otpbtn">Send OTP</button>
+  <button class="change_email"> change email</button><br>
+  <p class="info">we will send a OTP to your registered email to verify you. Check your email and  enter the OTP to next page. if not found check spam folder.</p>
+  <br>
+  <img id="loadgif" src="{% static 'ajax-loader.gif' %}" style="width: 100px; height: 100px; display: none;">
+  <p id="otpmsz"></p>
+
+</div>
+
+</div>
 <br>
- <h2>Search friend</h2>
-    <form action="/public/search/" method="POST" >
-        {% csrf_token %}
-        <input type="text" placeholder="Name/college/place..." name="fname"  autofocus>
-        <p>OR</p>
-        <input type="number" placeholder="Person ID (only number)..." name="prsnid">
-        <button  type="submit"><span class="glyphicon glyphicon-search"></span> Search</button>
-	    
-	      <div >
-	      	<br>
-	      	<span></span>
-	        {% for message in messages %}
-	            <span style= "font-size: 18px;color:red;">
-	                * {{message}}
-	            </span>
-	        {% endfor %}
-	    </div>
-    </form>
+<div class="search">
+	<h2>Search friend</h2>
+  <form action="javascript:void(0);">
+	<input type="text" minlength="1" required placeholder="Name/college/place..." id="fname">
+	<br><br>
+	<button class="search_btn"> Search </button>
+</form>
+	<p id="msz" style="color:#660033;"></p>
+
 </div>
-<div class="col-sm-2">
-</div>
-</div>
-</div>
+<br><br><br><br>
+<footer>
+  <div>
+  <a href="/public/" target="_blank">How to use </a> &nbsp; | &nbsp;
+  <a href="/public/2">Help Desk </a> &nbsp; | &nbsp;
+  <a href="/public/1"> Founder & CEO</a> &nbsp; | &nbsp;
+  <span>&#169; 2020 Squirrel Product </span>
+  </div>
+</footer>
 
 
 <script>
-  function changeurl() {
-  var curlink = window.location.href;
-  var homelink = curlink.split("/",2)[0];
-  document.getElementById("homeid").href=homelink +'/';
-  document.getElementById("loginid").href=homelink + '/login/';
-  document.getElementById("register").href=homelink  + '/register/';
-}
-</script>
+ $('.login').click(function(){
+ 		$('.login').attr("class", "login active");
+ 		$('.register').attr("class", "register");
+ 		$('.login_div').show();
+    $('.reg_div').hide();
+    $('.otp_div').hide();
+	$('html, body').animate({ scrollTop: $("#heading").offset().top },'slow');
 
-</body>
+ });
+ $('.register').click(function(){
+    $(".form").css("min-height","480px")
+ 		$('.register').attr("class", "register active");
+ 		$('.login').attr("class", "login");
+ 		$('.login_div').hide();
+ 		$('.reg_div').show();
+    $('.otp_div').hide();
+	$('html, body').animate({ scrollTop: $("#heading").offset().top },'slow');
+
+ });
+ $('.hide_pswd').click(function(){
+ 	var oldtype = $('.pswd').attr("type"); 
+ 	if (oldtype=="password") {
+ 		$('.pswd').attr("type", "text");
+ 		$('.hide_pswd').css("text-decoration", "line-through");
+ 	}
+ 	else {
+ 		$('.pswd').attr("type", "password");
+ 		$('.hide_pswd').css("text-decoration", "none");
+ 	}
+
+ });
+
+ $('.change_email').click(function(){
+    $('.otp_div').slideUp();
+    $('.reg_div').slideDown();
+ });
+
+</script>
+<script>
+
+  $('.search_btn').click(function(){
+  var fname = $("#fname").val();
+  if (fname.length ==0){
+       $('#msz').text("please enter atleast 1 char");
+  }
+  else if (fname.length >15){
+       $('#msz').text("maximum 15 characters allowed");
+  }
+  else{
+  $.ajax(
+  {
+      type:"post",
+      url: "/public/search/",
+      data:{
+               fname: fname
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+      	if(data.status==1){
+      		window.location = data.url;
+      	}
+      	else{
+        	$('#msz').text(fname+ " :- " + data.msz);
+      	}
+      }
+   })
+    }
+});
+
+</script>
+<script>
+  $('#register_me').click(function(){
+  var myname = $("#fullname").val();
+  var myemail = $("#email_reg").val();
+  var mypswd1 = $("#pswd_reg").val();
+  var mypswd2 = $("#pswd_reg_1").val();
+  $('#msz_name').text("");
+  $('#msz_email').text("");
+  $('#msz_pswd').text("");
+  var isvalid=true;
+  if (myname.length <4){
+        isvalid=false;
+       $('#msz_name').text("* atleast 4 characters required");
+  }
+  else if (myname.length >25){
+        isvalid=false;
+       $('#msz_name').text("* maximum 25 characters");
+  }
+  if (myemail.length <5 || myemail.length >40 || !(myemail.includes("@"))){
+        isvalid=false;
+       $('#msz_email').text("* Invalid email");
+  }
+  if (mypswd1.length <5){
+        isvalid=false;
+       $('#msz_pswd').text("* atleast 5 characters required");
+  }
+  if (mypswd2.length <5){
+        isvalid=false;
+       $('#msz_pswd').text("* atleast 5 characters required");
+  }
+  if (mypswd2.length >25){
+        isvalid=false;
+       $('#msz_pswd').text("* maximum 25 characters");
+  }
+  if (mypswd2 != mypswd1){
+        isvalid=false;
+       $('#msz_pswd').text("* password not match");
+  }
+  if (isvalid) {
+    $('html, body').animate({ scrollTop: $("#heading").offset().top },'slow');
+    $(".reg_div").slideUp();
+    $(".otp_div").slideDown();
+    $(".otpbtn").prop("disabled", false);
+    $(".otpbtn").css("cursor", "pointer");
+
+  }
+});
+
+</script>
+<script>
+  $('.otpbtn').click(function(){
+  var myname = $("#fullname").val();
+  var myemail = $("#email_reg").val();
+  var mypswd1 = $("#pswd_reg").val();
+  var mypswd2 = $("#pswd_reg_1").val();
+  $('#otpmsz').text("");
+  $(".otpbtn").prop("disabled", true);
+  $(".otpbtn").css("cursor", "wait");
+
+  $.ajax(
+  {
+      type:"post",
+      url: "/sendotp/",
+      data:{
+               myname: myname,
+               myemail: myemail,
+               mypswd1: mypswd1,
+               mypswd2: mypswd2
+      },
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function(data) 
+      {
+        if(data.status=="valid"){
+          $(".otpbtn").css("cursor", "default");
+          window.location = data.url;
+        }
+        else{
+          $(".otpbtn").css("cursor", "not-allowed");
+          $('#otpmsz').text(data.msz);
+        }
+      }
+   })
+});  
+</script>
+<script>
+
+$(document).on({
+    ajaxStart: function() { $("#loadgif").show();    },
+     ajaxStop: function() { $("#loadgif").hide();  }    
+});
+
+</script>
+  </body>
 </html>
