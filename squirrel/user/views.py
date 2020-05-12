@@ -155,7 +155,6 @@ def findfrnd(request,  user_id=None) :
     return redirect("/")
 
 def saveprofile(request,user_id=None ):
-    print("start saveprofile")
     user = request.user
     myprofile = profile.objects.get(owner = user)
 
@@ -174,7 +173,6 @@ def saveprofile(request,user_id=None ):
 
     user.first_name = fullname
     user.save()
-    print("saved")
     return redirect('/user/' +str(request.user.id))
 
 def following(request,user_id=None ):

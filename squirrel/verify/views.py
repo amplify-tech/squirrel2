@@ -66,7 +66,6 @@ def login(request):
 	            myprofile = profile.objects.get(owner = user)
 	            myprofile.isactive = True
 	            myprofile.save()
-	            print("login success")
 	            return redirect('/user/' +str(user.id))
 	        else:
 	            messages.info(request, 'Invalid Email or Password')
@@ -77,7 +76,6 @@ def login(request):
 
 
 def logout(request):
-    print("logout")
     user = request.user
     myprofile = profile.objects.get(owner = user)
     myprofile.isactive = False
@@ -87,7 +85,6 @@ def logout(request):
 
 
 def email_send(email):
-	print("email sending")
 	theemail=Email.objects.get(email=email)
 	the_nvuser = nvuser.objects.get(email=email)
 
@@ -119,17 +116,13 @@ without this OTP no one can be able to register this email on Squirrel.
 
 	email_from = settings.EMAIL_HOST_USER
 	recipient_list = [str(email),]
-	print("mail ready")
 	try:
 		x = send_mail( subject, message, email_from, recipient_list,fail_silently=False, )
 		if x>0:
-			print("mail sent")
 			return True
 		else:
-			print("there is some problem2 in sending mail")
 			return False
 	except Exception:
-		print("there is some problem in sending mail")
 		return False
 
 
@@ -147,17 +140,14 @@ def verifyme(request,  nvuser_id=None):
 					vuser.save()
 					newprofile = profile(owner=vuser , fullname=the_nvuser.fullname, isactive=True)
 					newprofile.save()
-					print("profile created")
 
 					temp1 = the_nvuser.email
 					temp2 = the_nvuser.lastname
 					user = auth.authenticate(email=temp1, password=temp2)
 					auth.login(request,user)
-					print("going to login")
 
 					nvuser.objects.filter(email=temp1).delete()
 					Email.objects.filter(email=temp1).delete()
-					print("old realted data deleted")
 
 					return redirect('/user/'+str(vuser.id))
 				else:
@@ -184,7 +174,6 @@ def verifyme(request,  nvuser_id=None):
 		return HttpResponse("<h2> url not exist ! </h2>")
 
 def sendotp(request,  nvuser_id=None):
-	print("sendotp")
 	myname = request.POST['myname']
 	myemail = request.POST['myemail']
 	mypswd1 = request.POST['mypswd1']
@@ -211,10 +200,8 @@ def sendotp(request,  nvuser_id=None):
 		valid=False
 		msz+="this email is already taken. "
 
-	print("validity: " , valid)
 	if(valid):
 		cur_otp = randint(134154, 948752)
-		print(cur_otp)
 		if Email.objects.filter(email=myemail).exists():
 			oldemail = Email.objects.get(email=myemail)
 			oldemail.email=myemail
@@ -223,13 +210,11 @@ def sendotp(request,  nvuser_id=None):
 			oldemail.save()
 			alrdysend=oldemail.num_try
 			newurl =  "/verifyme/" + makestr(oldemail.id)
-			print("111111111")
 		else:
 			newemail = Email(email=myemail,num_try=1,otp_try=1,otp=cur_otp)
 			newemail.save()
 			alrdysend=1
 			newurl =  "/verifyme/" + makestr(newemail.id)
-			print("2222222222")
 
 		if nvuser.objects.filter(email=myemail).exists():
 			old_nvuser = nvuser.objects.get(email=myemail)
@@ -237,17 +222,14 @@ def sendotp(request,  nvuser_id=None):
 			old_nvuser.fullname=myname
 			old_nvuser.lastname=mypswd1
 			old_nvuser.save()
-			print("3333333333")
 		else:
 			new_nvuser = nvuser(email=myemail,fullname=myname,lastname=mypswd1)
 			new_nvuser.save()
-			print("4444444444")
 
 		if alrdysend<=3:
 
 			ismail_send = email_send(myemail)
 			if ismail_send:
-				print("mail sent")
 				response = {"status":"valid", "msz":"OTP sent, check your mail", "url":newurl}
 			else:
 				errormsz = """there is some problem in sending the mail!
@@ -256,12 +238,10 @@ def sendotp(request,  nvuser_id=None):
 				 Try later with a valid email :) """
 				response = {"status":"invalid", "msz":errormsz, "url":"/"}
 		else:
-			print("already 3 times sent")
 			response = {"status":"valid", "msz":"3 times sent", "url":newurl}
 
 	else:
 		response = {"status":"invalid", "msz":msz, "url":"/"}
-	print("im returning")
 	return JsonResponse(response, safe=False)
 
 
@@ -270,16 +250,12 @@ def sendotpagain(request,  nvuser_id=None):
 	if decadme.isnumeric():
 		if Email.objects.filter(id=int(decadme)).exists():
 			cur_otp = randint(134154, 948752)
-			print(cur_otp)
 			theemail=Email.objects.get(id=int(decadme))
 			theemail.num_try+=1
 			theemail.otp = cur_otp
 			theemail.save()
 			if theemail.num_try<=3:
 				email_send(theemail.email)
-				print("one more mail send, redirecting")
-			else:
-				print("already 3 mail sent")
 			return redirect("/verifyme/"+ str(nvuser_id))
 
 		else:
