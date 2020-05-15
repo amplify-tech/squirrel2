@@ -42,6 +42,19 @@
     <details>
       <summary style="font-size: 20px;">Edit Profile</summary>
       <br>
+      {% if isprivate %}
+        <span>your profile is </span> <span id="private_label" style="color: green;">private -</span>
+        <button id="makeprivate" style="color: red;">make public</button>
+      {% else %}
+        <span>your profile is </span> <span id="private_label" style="color: red;">public -</span>
+        <button id="makeprivate" style="color: green;">make private</button>
+      {% endif %}
+
+
+
+      <br><br>
+
+
       <form method = "post" action="/user/{{user.id}}/update_pic/" enctype="multipart/form-data"> 
         {% csrf_token %}
         <table>
@@ -80,7 +93,7 @@
     
     <p>Studies/Working at <input id="test4" name="school" type="text" placeholder="write here"
       value="{{profile.school}}"> </p>
-
+      <br>
     <button type="submit" > Save </button>
   </form>
 
@@ -236,6 +249,33 @@ $("#profile_id").attr("class", "btn btn-success topic")
       }
    })
  }
+});
+
+</script>
+<script>
+  $('#makeprivate').click(function(){
+  $.ajax(
+  {
+      type:"post",
+      url: "/user/{{user.id}}/makeprivate/",
+      data:{ },
+      
+      headers: {'X-CSRFToken': '{{ csrf_token }}'},
+      success: function( data ) 
+      {
+
+        if ($('#private_label').text() == "private -"){
+           $('#private_label').text("public -").css("color","red");
+           $('#makeprivate').text("make private").css("color","green");
+         }
+
+        else{
+           $('#private_label').text("private -").css("color","green");
+           $('#makeprivate').text("make public").css("color","red");
+         }
+
+      }
+   })
 });
 
 </script>

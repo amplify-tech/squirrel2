@@ -13,6 +13,7 @@ from datetime import datetime
 import pytz
 from .forms import *
 from django.db.models import Q
+from django.db.models import Sum
 import string  
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -20,6 +21,7 @@ User = get_user_model()
 allpunc = string.punctuation
 
 tz = pytz.timezone('Asia/Kolkata')
+helpdeskid = 4
 
 def dashboard(request,  user_id=None):
     if request.user.is_authenticated: 
@@ -27,6 +29,7 @@ def dashboard(request,  user_id=None):
             user = request.user
             myprofile = profile.objects.get(owner = user)
             total_notify = myprofile.all_notify
+            isprivate = Private_prof.objects.filter(owner=user).exists()
 
             form = Prof_form()
             status_form = Status_form()
@@ -39,7 +42,7 @@ def dashboard(request,  user_id=None):
 
             context= {'profile':myprofile, 'form' : form,  'status_form' : status_form,
                     'pimages' : pictures, 'status':status_likelist_islike,
-                    'all_notify':total_notify}
+                    'all_notify':total_notify, "isprivate":isprivate}
             return render(request, 'profile.html', context) 
 
     return redirect("/")
@@ -64,38 +67,55 @@ def chat(request,  user_id=None , ricvr_id=None) :
                 # now he is reading msz so remove some notification
 
                 ricvr = User.objects.get(id=int(ricvr_id))
-                thischat_key =  str(min(user.id, int(ricvr_id))) + "@" + str(max(user.id, int(ricvr_id)))
+                isprivate = Private_prof.objects.filter(owner=ricvr).exists()
+                isflwing = User_Following.objects.filter(user_id=user.id, following=ricvr).exists()
+                isflwer = User_Follower.objects.filter(user_id=user.id, follower=ricvr).exists()
+                if int(ricvr_id)==1 or int(ricvr_id)==helpdeskid :
+                    isflwing=True
+                    isflwer= True
 
-                oldchat = Chate.objects.all().filter(chatkey=thischat_key)
+                if int(user_id)==1 or int(user_id)==helpdeskid :
+                    isflwing=True
+                    isflwer= True
 
-                # notifiction  --n     ********************************
-                n1 = 0
-                n2 = 0 
-                # following
-                flwing = User_Following.objects.all().filter(user_id=user.id, following=ricvr)
-                if len(flwing) != 0:
-                    flwing1 = flwing[0]
-                    n1 = flwing1.notification
-                    flwing1.notification = 0
-                    flwing1.save()
+                if  isprivate and (not isflwing) and (not isflwer):
+                    return HttpResponse("<h2> This account is private </h2>")
+                if  (not isflwing) and (not isflwer):
+                    return HttpResponse("<h2> you can only chat with your following/follower</h2>")
+                else:
 
-                # followers
-                flwer = User_Follower.objects.all().filter(user_id=user.id, follower=ricvr)
-                if len(flwer) != 0:
-                    flwer1 = flwer[0]
-                    n2 = flwer1.notification
-                    flwer1.notification = 0
-                    flwer1.save()
+                    thischat_key =  str(min(user.id, int(ricvr_id))) + "@" + str(max(user.id, int(ricvr_id)))
 
-                # all notify**********************
-                myprofile.all_notify = myprofile.all_notify - max(n1, n2)   #hopefully n1=n2
-                myprofile.save()
+                    oldchat = Chate.objects.all().filter(chatkey=thischat_key)
 
-                total_notify2 = myprofile.all_notify
-                # **************************************************
-                context = {'ourchat': oldchat ,'rcvr': ricvr,
-                'rcvr_id':ricvr_id, 'all_notify':total_notify2, 'chat_key':thischat_key}
-                return render(request, 'chat.html', context)
+                    # notifiction  --n     ********************************
+                    n1 = 0
+                    n2 = 0 
+                    # following
+                    flwing = User_Following.objects.all().filter(user_id=user.id, following=ricvr)
+                    if len(flwing) != 0:
+                        flwing1 = flwing[0]
+                        n1 = flwing1.notification
+                        flwing1.notification = 0
+                        flwing1.save()
+
+                    # followers
+                    flwer = User_Follower.objects.all().filter(user_id=user.id, follower=ricvr)
+                    if len(flwer) != 0:
+                        flwer1 = flwer[0]
+                        n2 = flwer1.notification
+                        flwer1.notification = 0
+                        flwer1.save()
+
+                    # all notify**********************
+                    myprofile.all_notify = myprofile.all_notify - max(n1, n2)   #hopefully n1=n2
+                    myprofile.save()
+
+                    total_notify2 = myprofile.all_notify
+                    # **************************************************
+                    context = {'ourchat': oldchat ,'rcvr': ricvr,
+                    'rcvr_id':ricvr_id, 'all_notify':total_notify2, 'chat_key':thischat_key}
+                    return render(request, 'chat.html', context)
     
     return redirect("/")
 
@@ -105,9 +125,20 @@ def myfrnd(request,  user_id=None) :
         if int(user_id) == request.user.id:
             user = request.user
             myprofile = profile.objects.get(owner = user)
-            total_notify = myprofile.all_notify
             
             # following
+            if int(user_id) == helpdeskid:
+                ishelp=True
+                allproblem=[]
+                alluser=User.objects.all()
+                for uu in alluser:
+                    thischat_key =  str(min(uu.id, helpdeskid)) + "@" + str(max(uu.id, helpdeskid))
+                    nummsz = len( Chate.objects.filter(chatkey = thischat_key) )
+                    allproblem.append([uu,nummsz])
+            else:
+                allproblem=[]
+                ishelp=False
+
             flwing = User_Following.objects.all().filter(user_id=user.id)
             
             query = Q(owner=user)
@@ -119,6 +150,19 @@ def myfrnd(request,  user_id=None) :
 
             # follower       list of pair 
             flwer = User_Follower.objects.all().filter(user_id=user.id)
+           
+            # all notification
+
+            pstiveflwing = flwing.filter(notification__gt=0).values('following_id', 'notification')
+            pstiveflwer = flwer.filter(notification__gt=0).values('follower_id','notification')
+            notfy_union = pstiveflwing.union(pstiveflwer)
+            l = list(notfy_union)
+            total_notify = sum([x['notification'] for x in l])
+
+            myprofile.all_notify =  total_notify
+            myprofile.save()
+
+
             profile_flwer=[]
             for i in flwer:
                 himprofile = profile.objects.get(owner = i.follower)
@@ -131,7 +175,7 @@ def myfrnd(request,  user_id=None) :
                 status_likelist_islike.append([i,islike])
 
 
-            context =  { 'allfollowing': profile_flwing, 'allfolower': profile_flwer,
+            context =  { 'ishelp':ishelp, 'allproblem':allproblem, 'allfollowing': profile_flwing, 'allfolower': profile_flwer,
                         'all_notify':total_notify, 'status':status_likelist_islike}
 
             return render(request, 'myfrnd.html', context)
@@ -149,6 +193,13 @@ def findfrnd(request,  user_id=None) :
             for f in myflwing:
                 all_users=all_users.exclude(id=f.following.id)   
                  #remove those are already  following
+
+            all_private = Private_prof.objects.all()
+            for pp in all_private:
+                print(pp.owner.id)
+                all_users=all_users.exclude(id=pp.owner.id)   
+                 #remove those are already  following
+
             all_users = all_users.order_by('first_name')
             return render(request, 'findfrnd.html', {'alluser': all_users, 'all_notify':total_notify})
 
@@ -280,7 +331,16 @@ def viewprofile(request,user_id=None, ricvr_id=None ):
             num_flwing= User_Following.objects.all().filter(user_id=int(ricvr_id)).count()
             num_flwer= User_Follower.objects.all().filter(user_id=int(ricvr_id)).count()
 
-            return render(request, 'viewprofile.html' , {'whose_profile' :whose_profile, 'status':status_likelist_islike, 'pimages':pictures, 'num_flwing':num_flwing, 'num_flwer':num_flwer})
+            isprivate = Private_prof.objects.filter(owner=whose_user).exists()
+            isflwing = User_Following.objects.filter(user_id=user.id, following=whose_user).exists()
+            isflwer = User_Follower.objects.filter(user_id=user.id, follower=whose_user).exists()
+
+            isprivate= isprivate and (not isflwer) and (not isflwing)
+
+            context = {'whose_profile' :whose_profile, 'status':status_likelist_islike,
+                        'pimages':pictures, 'num_flwing':num_flwing,
+                        'num_flwer':num_flwer, "isprivate":isprivate}
+            return render(request, 'viewprofile.html' ,context)
 
     return redirect("/")
 
@@ -445,6 +505,26 @@ def del_prof_pic(request, user_id=None):
 
     return redirect('/user/' +str(request.user.id))
 
+
+def makeprivate(request, user_id=None):
+    if request.user.is_authenticated: 
+        if int(user_id) == request.user.id:
+            user = request.user
+            if Private_prof.objects.filter(owner=user).exists() :
+                print("it was private")
+                thprof =Private_prof.objects.get(owner=user)
+                thprof.delete();
+                print("now its public")
+            else:
+                print("it was publiv")
+                newprv = Private_prof(owner=user)
+                newprv.save()
+                print("now its private")
+
+            return HttpResponse("success")
+
+
+    return redirect("/")
 
 
 # imp ++++++++++++++++++++++++********************************

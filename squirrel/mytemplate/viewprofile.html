@@ -53,21 +53,32 @@
 }
   </style>
 </head>
-<body onload="changeurl()" >
+<body>
 <div class="container-fluid">
-  <a class="btn btn-info" role="button" id="profile" href="">Home</a>
+  <a class="btn btn-info" role="button" href="/">Home</a>
 <div class="row well" style="padding: 0;">
 <div class="col-sm-1">  </div>
 <div class="col-sm-5 well" style="text-align: center; padding: 7px;"> 
+     {% load staticfiles %}
+
+    {% if isprivate %}
+     <div style="border: 1px solid black; padding-bottom: 7px;">
+      <h2 style="color: green"> {{whose_profile.fullname}}   </h2>
+
+       <img src="{% static 'user.png' %}" alt="{{whose_profile.fullname}}" style="width:40%">
+
+      </div>
+      <h2 style="color: red;">This account is private</h2>
+      {% else %}
+
 
      <div style="border: 1px solid black; padding-bottom: 7px;">
-      <h2 style="color: green"> {{whose_profile.owner.first_name}}   </h2>
-     {% load staticfiles %}
+      <h2 style="color: green"> {{whose_profile.fullname}}   </h2>
 
       {% if pimages.prof_pic %}
          <img src="{{ pimages.prof_pic.url }}" style="max-width:80%; max-height: 300px;" >
       {% else %} 
-         <img src="{% static 'user.png' %}" alt="{{whose_profile.owner.first_name}}" style="width:40%">
+         <img src="{% static 'user.png' %}" alt="{{whose_profile.fullname}}" style="width:40%">
       {% endif %}
 
       </div>
@@ -80,7 +91,13 @@
       <p>{{num_flwer}} followers &nbsp; &nbsp; | &nbsp; &nbsp;  {{num_flwing}} following</p>
       </div>
 
+   {% endif %}
+
 </div>
+
+    {% if isprivate %}
+<div class="col-sm-5"></div>
+   {% else %} 
 
 <div class="col-sm-5 well" style="padding: 7px; font-size: 18px;"> 
     <h3 style="text-align: center; color: blue;">Posts</h3>
@@ -115,17 +132,11 @@
 
 
 </div>
-<div class="col-sm-1">  </div>
+    {% endif %}
+
+<div class="col-sm-1"></div>
 </div>
 </div>
-
-<script>
-  function changeurl() {
-  var mylink = window.location.href;
-  document.getElementById("profile").href=mylink.split("/viewprofile")[0];
-}
-</script>
-
 
 <script>
   $('.likebutton').click(function(){

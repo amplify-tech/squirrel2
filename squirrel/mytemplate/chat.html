@@ -66,7 +66,7 @@
         Follow someone from explore page.<br>
         Select someone from followers/following list from the network page.<br>
         Start a chat &#128522; <br>
-      <a href="/user/{{user.id}}/viewprofile/1" style="font-size: 16px;"> --help desk</a>
+      <a href="/user/{{user.id}}/viewprofile/1" style="font-size: 16px;"> -- help desk</a>
 
       </p>
         </tr>
@@ -75,7 +75,7 @@
     </div>
 
 <div>
-    <textarea  cols="20" rows="1"  id="frndmsz" autofocus="True"
+    <textarea  cols="20" rows="1"  id="frndmsz" autofocus 
     placeholder="write a msz here" name="mymsz" style="width: 75%;"></textarea>
 
     <button class="sendbtn" id="sendbtn"  data-catid=0>Send</button>
@@ -180,7 +180,7 @@ function hide_emoji(){
 
           var newrow = $("<tr> </tr>");
           var themsz = $("<p>" + data[i].msz +"</p>");
-          var itstime = $("<br><span>--" + data[i].date +"</span>").addClass("msz_time");
+          var itstime = $("<br><span>-- " + data[i].date +"</span>").addClass("msz_time");
 
       if(data[i].sender_id == "{{user.id}}"){ themsz.attr("class", "msz outgoing");}
       else{ themsz.attr("class", "msz incoming"); }
@@ -222,7 +222,7 @@ function fetchdata(tt=500){
     
           var newrow = $("<tr> </tr>");
           var themsz = $("<p>" + data[i].msz +"</p>");
-          var itstime = $("<br><span>--" + data[i].date +"</span>").addClass("msz_time");
+          var itstime = $("<br><span>-- " + data[i].date +"</span>").addClass("msz_time");
 
       if(data[i].sender_id == "{{user.id}}"){ themsz.attr("class", "msz outgoing");}
       else{ themsz.attr("class", "msz incoming"); }

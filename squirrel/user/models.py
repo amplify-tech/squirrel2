@@ -56,3 +56,6 @@ class Status(models.Model):
 class Likes(models.Model):
     status_id = models.IntegerField(default=0)
     who_like = models.ForeignKey(User,on_delete=models.CASCADE)
+
+class Private_prof(models.Model):
+    owner = models.ForeignKey(User,on_delete=models.CASCADE)

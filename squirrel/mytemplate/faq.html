@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>FAQ</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+<style>
+body{
+	padding: 0;
+	margin: 0;
+	font-size: 20px;
+}
+nav{
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	font-size: 32px;
+	color: yellow;
+	text-align: center;
+}
+footer{
+	background-color: white;
+	text-align: center; color: black;
+	width: 100%;
+	font-style: italic;
+	font-size: 18px;
+}
+footer div{
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  line-height: 1.6;
+  padding-bottom: 20px;
+
+}
+footer div a{
+  color: blue;
+  white-space: nowrap;
+}
+
+img{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.content{
+	padding: 2px 15px 2px 15px;
+	margin: 2px 0 2px 0;
+	line-height: 1.4;
+}
+.question{
+	padding: 2px 5px 2px 15px;
+	margin: 2px 0 10px 0;
+	border: 1.5px solid black;
+	font-size: 20px;
+	color:blue;
+	word-break: break-all; 
+	word-wrap: break-word;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+.answer{
+	padding: 0 5px 0 5px;
+	margin: 0;
+	font-size: 18px;
+	color : black;
+	word-break: break-all; 
+	word-wrap: break-word;
+
+}
+input{
+	font-size: 20px;
+	height: 30px;
+	width: 400px;
+	max-width: 95%;
+}
+button{
+	font-size: 20px;
+	padding: 4px;
+	width: 100px;
+	margin-right: auto;
+	margin-left: auto;
+}
+form{
+	margin-left: 10px;
+}
+</style>
+</head>
+
+<body>
+<nav> Squirrel</nav>
+<div class="content">
+	<h2>All FAQ (Frequently Asked Questions)</h2>
+	<p>Ask a Question </p>
+    <form action="/public/ask/" method="POST" >
+        {% csrf_token %}
+		<input type="text" name="question" required placeholder="ask a question here">
+		<br><br>
+		<button type="submit"> submit </button>
+   </form>
+   <br>
+
+   {%  for q,anslist in allqans_list %}
+	<div class="question">
+		<p> <strong> Q.{{forloop.counter}}) {{ q.question }} </strong></p>
+	   
+	{% if ishelp %}
+	<a style="color: red;" href="/public/delq/{{ q.id }}"> delete this Q</a> <br><br>
+	    <form action="/public/ansfaq/" method="POST" >
+	        {% csrf_token %}
+			<input type="number" style="display: none;" name="qid"  value="{{q.id}}">
+			<input type="text" name="ans" required placeholder="write answer here">
+			
+			<button type="submit"> submit </button>
+	   </form>
+	{% endif%}
+
+
+   			{% for  ans in anslist %}
+				<div class="answer">
+					
+			{% if ishelp %}
+			<a style="color: red;" href="/public/delans/{{ans.id}}"> delete this answer</a>
+			{% endif%}
+
+					<span style="color:green;"> Ans.{{forloop.counter}}) </span>
+					<p> {{ans.answer}}</p>
+				</div>
+			{% endfor %}
+	</div>
+	{% endfor %}
+
+</div>
+<br><br><br>
+<footer>
+  <div>
+  <a href="/" target="_blank"> Home </a> &nbsp; | &nbsp;
+  <a href="/public/faq"> Help Desk </a> &nbsp; | &nbsp;
+  <a href="/public/1"> Founder & CEO</a> &nbsp; | &nbsp;
+  <span>&#169; 2020 Squirrel Product </span>
+  </div>
+</footer>
+</body>
+</html>

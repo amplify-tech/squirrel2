@@ -1,13 +1,104 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>How to use</title>
+	<title>How to use</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="{% static 'icon.jpg' %}" rel="icon">
+  <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+body{
+	padding: 0;
+	margin: 0;
+	font-size: 20px;
+}
+nav{
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	font-size: 32px;
+	color: yellow;
+	text-align: center;
+}
+footer{
+	background-color: white;
+	text-align: center; color: black;
+	width: 100%;
+	font-style: italic;
+}
+footer div{
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  line-height: 1.6;
+  padding-bottom: 20px;
+}
+footer div a{
+  color: blue;
+  white-space: nowrap;
+}
+
+img{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.menu{
+	background-color: #ffb3ff;
+	padding: 10px;
+	line-height: 0.5;
+	border: 2px solid black;
+}
+.details{
+	background-color: #4dffa6;
+	padding: 10px;
+	line-height: 0.5;
+}
+.details div{
+	width: 100%;
+	max-width: 400px;
+}
+</style>
 </head>
+
 <body>
+<nav> Squirrel</nav>
+<div class="menu">
+	<p>hello hello hello hello</p>
+	<p>hello</p>
+	<p>hello</p>
+	<p>hello</p>
+	<p>hello</p>
+</div>
+<div class="details">
+	<div>
+	<p>here im</p>
+	<p>here im</p>
+	<p>here im</p>
+	<p>here im</p>
+<img src="{% static 'howtouse/home.png' %}" style=" width: 100%; height: auto;">
+	</div>
+</div>
 
-<a href="/">home</a>
-<h1>This is a Heading</h1>
-<p>This is a paragraph.</p>
 
+
+
+
+
+
+
+
+<br><br><br>
+<footer>
+  <div>
+  <a href="/" target="_blank"> Home </a> &nbsp; | &nbsp;
+  <a href="/public/faq" target="_blank"> Help Desk </a> &nbsp; | &nbsp;
+  <a href="/public/1"> Founder & CEO</a> &nbsp; | &nbsp;
+  <span>&#169; 2020 Squirrel Product </span>
+  </div>
+</footer>
+</div>
 </body>
 </html>

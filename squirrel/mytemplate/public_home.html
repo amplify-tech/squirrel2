@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title> Profile </title>
+  <title> Public Profile </title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
@@ -60,11 +60,10 @@
             <img src="{% static 'user.png' %}" alt="{{user.username}}" style="width:40%">
           </div>
       <div class="well" style="text-align: left; padding-left: 5%;"> 
-        <p>Bio        <b> {{i.bio}}  </b>		 </p>
+        <p>About        <b> {{i.bio}}  </b>		 </p>
         <p>Lives in   <b> {{i.livesin}}  </b>   </p>
         <p>From       <b> {{i.hometown}}  </b>  </p>
         <p>Studies/working at <b> {{i.school}}  </b>    </p>
-        <p>Status  <b> {{i.status}}  </b>    </p>
       </div>
     </div>
         {% endfor %}

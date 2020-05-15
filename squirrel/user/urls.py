@@ -13,6 +13,7 @@ urlpatterns = [
     path('<user_id>/update_status/', views.update_status, name='update_status'),
     path('<user_id>/following/', views.following, name='following'),
     path('<user_id>/likes/', views.likes, name='likes'),
+    path('<user_id>/makeprivate/', views.makeprivate, name='makeprivate'),
     path('<user_id>/find_all_liker/', views.find_all_liker, name='find_all_liker'),
     path('<user_id>/del_status/', views.del_status, name='del_status'),
     path('<user_id>/del_prof_pic/', views.del_prof_pic, name='del_prof_pic'),

@@ -104,6 +104,26 @@
 </div>
 <div class="col-sm-2"></div>
 </div>
+ {% if ishelp %}
+<div class="row">
+  <div class="col-sm-2"> </div>
+  <div class="col-sm-8">
+    <h2> solve some problem </h2>
+    {% for uu,nm in allproblem %}
+
+     <p> <a href="/user/{{user.id}}/chat/{{uu.id}}"> {{ uu.first_name }}</a>
+        {% ifequal  nm 0  %}
+        {%else%}
+           <span class="badge">{{ nm }}</span> 
+        {% endifequal %}
+      </p>
+    {% endfor %}
+
+  </div>
+  <div class="col-sm-2"> </div>
+</div>
+
+ {% endif %}
 
  <!-- posts from follwoinf -->
 <div class="row">
