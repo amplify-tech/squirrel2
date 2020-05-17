@@ -55,14 +55,17 @@
 
   <p>Confirm Password </p>
   <input  type="password" placeholder="Password" class="pswd" id="pswd_reg_1"> 
-  <br><br>
+  <br>
   <button class="submit_type" id="register_me" > Register </button>
 </div>
 
 <div class="otp_div" style="display: none;">
   <button class="otpbtn">Send OTP</button>
   <button class="change_email"> change email</button><br>
-  <p class="info">we will send a OTP to your registered email to verify you. Check your email and  enter the OTP to next page. if not found check spam folder.</p>
+  <p class="info">we will send a OTP to your registered email to verify you. Check your email and  enter the OTP to next page. if not found check spam folder.<br><br>
+  <span style="color: green;"> Your email address will remain confidential and  used only for login purposes.<br>
+    your fullname will be used everywhere in your profile.
+</p>
   <br>
   <img id="loadgif" src="{% static 'ajax-loader.gif' %}" style="width: 100px; height: 100px; display: none;">
   <p id="otpmsz"></p>
