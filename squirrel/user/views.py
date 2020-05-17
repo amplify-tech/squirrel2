@@ -21,7 +21,7 @@ User = get_user_model()
 allpunc = string.punctuation
 
 tz = pytz.timezone('Asia/Kolkata')
-helpdeskid = 4
+helpdeskid = 2
 
 def dashboard(request,  user_id=None):
     if request.user.is_authenticated: 
@@ -356,11 +356,11 @@ def send_msz(request,user_id=None):
     newmsz_list = []
     for c in curmsz:
         if c =='\n':
-            newmsz_list.append(" <br> ")
+            newmsz_list.append("<br>")
         elif c ==' ':
-            newmsz_list.append(" &nbsp; ")
+            newmsz_list.append("&nbsp;")
         elif c =='\t':
-            newmsz_list.append(" &nbsp; &nbsp; &nbsp; &nbsp;")
+            newmsz_list.append("&nbsp; &nbsp; &nbsp; &nbsp;")
 
         elif c.isalnum():
             newmsz_list.append(c)

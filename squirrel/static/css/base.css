@@ -1,0 +1,8 @@
+  footer{
+    text-align: center; width: 100%;
+    font-size: 18px;  font-style: italic;
+    word-break: normal;
+  }
+  footer a{
+  white-space: nowrap;
+  }

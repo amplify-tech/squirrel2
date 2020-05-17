@@ -48,6 +48,7 @@
       {% else %}
         <span>your profile is </span> <span id="private_label" style="color: red;">public -</span>
         <button id="makeprivate" style="color: green;">make private</button>
+        <a target="_blank" href="/public/#pp3"> &nbsp; &nbsp; know about privacy</a>
       {% endif %}
 
 
@@ -76,6 +77,8 @@
         {% csrf_token %}
        <button style="font-size: 18px; float: right;" type="submit" id="del_icon" class="btn btn-default btn-sm del_icon"> <span class="glyphicon glyphicon-trash" ></span> Remove picture  </button>
     </form>
+
+    <br>
 
     <form method = "post" action="/user/{{user.id}}/saveprofile/"> 
       {% csrf_token %}
@@ -148,6 +151,9 @@
 
 <details>
   <summary style="font-size: 20px;">update status</summary>
+  <p>create a post, this post will be available in the netwok page of your followers.</p>
+  <p>private profile - post only visible to followers/following.</p>
+  <p>public profile - any registered user can see your post. </p>
 
     <form method = "post" action="/user/{{user.id}}/update_status/" enctype="multipart/form-data"> 
       {% csrf_token %}
@@ -170,7 +176,6 @@
 {% endblock %}
 
 {% block jquery %}
-<script src="{% static '/js/profile.js' %}"></script>
 <script>
 $("#profile_id").attr("class", "btn btn-success topic")
 

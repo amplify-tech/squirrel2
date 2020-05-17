@@ -14,7 +14,9 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src='https://kit.fontawesome.com/a076d05399.js'></script> 
 
+  <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
   {% block style %}  {% endblock style %}
+
 </head>
 
 <body>
@@ -32,12 +34,13 @@
 
     {% endblock %}
 <br><br>
-    <footer style="text-align: center; width: 100%;font-size: 18px;  font-style: italic; word-break: normal;">
-      <a href="/public/" target="_blank">How to use </a> |
-      <a href="/user/{{user.id}}/chat/4">Help Desk </a> |
-      <a href="/user/{{user.id}}/viewprofile/1"> Founder & CEO</a> |
-      <span>&#169; 2020 Squirrel Product </span> |
-      <a href="/logout/" style="color: red;"> Logout </a>
+    <footer>
+      <a href="/public/" target="_blank"> How to use </a> &nbsp; | &nbsp;
+      <a href="/public/faq"> FAQ </a> &nbsp; | &nbsp;
+      <a href="/user/{{user.id}}/chat/2"> Help Desk </a> &nbsp; | &nbsp;
+      <a href="/user/{{user.id}}/viewprofile/1"> Founder & CEO </a> &nbsp; | &nbsp;
+      <span> &#169; 2020 Squirrel Product </span> &nbsp; | &nbsp;
+      <a href="/logout/" style="color: red;"> Logout </a> 
     </footer>
 
 </div>

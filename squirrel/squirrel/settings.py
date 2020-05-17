@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'squirrel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'sqrldata4',
+        'NAME': 'sqrldata2',
         'USER':'postgres',
         'PASSWORD': '1234',
         'HOST': 'localhost',

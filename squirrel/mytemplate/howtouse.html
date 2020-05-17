@@ -9,88 +9,276 @@
   <link href="{% static 'icon.jpg' %}" rel="icon">
   <link href="{% static 'icon.jpg' %}" rel="apple-touch-icon">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<style>
-body{
-	padding: 0;
-	margin: 0;
-	font-size: 20px;
-}
-nav{
-	padding: 0;
-	margin: 0;
-	background-color: black;
-	font-size: 32px;
-	color: yellow;
-	text-align: center;
-}
-footer{
-	background-color: white;
-	text-align: center; color: black;
-	width: 100%;
-	font-style: italic;
-}
-footer div{
-  width: 90%;
-  margin-left: auto;
-  margin-right: auto;
-  padding-top: 15px;
-  line-height: 1.6;
-  padding-bottom: 20px;
-}
-footer div a{
-  color: blue;
-  white-space: nowrap;
-}
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script> 
 
-img{
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.menu{
-	background-color: #ffb3ff;
-	padding: 10px;
-	line-height: 0.5;
-	border: 2px solid black;
-}
-.details{
-	background-color: #4dffa6;
-	padding: 10px;
-	line-height: 0.5;
-}
-.details div{
-	width: 100%;
-	max-width: 400px;
-}
-</style>
+  <link rel="stylesheet" type="text/css" href="{% static 'css/howtouse.css' %}">
+
 </head>
 
 <body>
 <nav> Squirrel</nav>
 <div class="menu">
-	<p>hello hello hello hello</p>
-	<p>hello</p>
-	<p>hello</p>
-	<p>hello</p>
-	<p>hello</p>
+	<p> <span style="font-size: 32px;"> Topic &nbsp;  &nbsp;</span>
+	   <span style="font-size: 26px;"> <a href="#sitemap"> Sitemap </a>  </span>  
+	</p>
+
+	<p>
+	 Registration and Login :- &nbsp;
+		<a href="#rr1"> Registration </a>  &nbsp;  &nbsp;  
+		<a href="#rr2"> OTP verification </a>  &nbsp;  &nbsp;  
+		<a href="#rr3"> Login </a>  &nbsp;  &nbsp;  
+		<a href="#lg"> Logout </a> 
+	<br><br>
+		 <button class="icon2"><i class='fas fa-user-edit headicon'></i> </button> Profile :-  &nbsp;  
+		<a href="#pp1"> Edit profile </a>  &nbsp;  &nbsp;  
+		<a href="#pp2"> upload profile picture </a>  &nbsp;  &nbsp;  
+		<a href="#pp4"> update status </a>  &nbsp;  &nbsp;  
+		<a href="#pp3"> set privacy (public/private profile) </a>  &nbsp;  &nbsp;  
+		<a href="#pp5"> delete account </a>   
+	<br><br>
+		<button class="icon2"><i class='fas fa-globe-americas headicon'></i> </button>  Explore  :-  &nbsp;  
+		<a href="#ee1"> how to follow someone </a>  &nbsp;  &nbsp;  
+		<a href="#ee2"> viewprofile </a>   
+	<br><br>
+		 <button class="icon2"><i class="fa fa-users headicon"></i> </button> Network :-  &nbsp;  
+		<a href="#nn"> List of All follower & following </a>  &nbsp;  &nbsp;  
+		<a href="#nn1"> posts from following </a>  &nbsp;  &nbsp;  
+		<a href="#nn1"> like post </a>  &nbsp;  &nbsp;  
+		<a href="#nn"> viewprofile </a>  &nbsp;  &nbsp;  
+		<a href="#nn"> select someone to chat  </a>  &nbsp;  &nbsp;  
+		<a href="#nn"> remove follower/following </a>  &nbsp;  &nbsp;  
+		<a href="#nn"> active status </a>  &nbsp;  &nbsp;  
+		<a href="#nn"> notification </a>   
+	<br><br>
+		<button class="icon2"><i class="fa fa-comments headicon"> </i> </button> Chat :-  &nbsp;  
+		<a href="#cc1"> to yourself </a>  &nbsp;  &nbsp;  
+		<a href="#cc2"> to follower & following </a>  &nbsp;  &nbsp;  
+		<a href="#cc3"> emoji </a>  &nbsp;  &nbsp;  
+		<a href="#cc4"> clear chat </a>   
+	<br><br>
+		<a href="#srch"> search a friend </a>  &nbsp;  &nbsp;  
+		<a href="#hlp"> Help Desk </a>  &nbsp;  &nbsp;  
+		<a href="#faq"> FAQ </a>   &nbsp;  &nbsp;   
+		<a href="#ack"> Acknowledgement </a>    
+	</p>
+	<p style="font-size: 18px;" >(click on any of the above link  to jump to that topic)</p>
+	<p style="font-size: 18px;" >(click on any image to enlarge)</p>
+
+
 </div>
 <div class="details">
 	<div>
-	<p>here im</p>
-	<p>here im</p>
-	<p>here im</p>
-	<p>here im</p>
-<img src="{% static 'howtouse/home.png' %}" style=" width: 100%; height: auto;">
+	<h2 id="sitemap">Sitemap</h2>
+	<a href="{% static 'howtouse/sitemap.png' %}">
+	 <img class="bigimg" src="{% static 'howtouse/sitemap.png' %}"> </a>
+	
+	<p> <button class="icon"><i class='fas fa-user-edit headicon'></i> </button> Profile (Dashboard page)</p>
+	<p> <button class="icon"><i class="fa fa-comments headicon"> </i> </button> Chat (page)   </p>
+	<p> <button class="icon"><i class="fa fa-users headicon"></i> </button>  Network (page)</p>
+	<p> <button class="icon"><i class='fas fa-globe-americas headicon'></i> </button> Explore (page)	  </p>
+
+	
+
+	<a href="{% static 'howtouse/mobile2.jpg' %}">
+	 <img class="smallimg" src="{% static 'howtouse/mobile2.jpg' %}"> </a>
+	 <figcaption>Mobile view after login</figcaption>
+	<br><br>
+	<a href="{% static 'howtouse/mobile.jpg' %}">
+	 <img class="smallimg" src="{% static 'howtouse/mobile.jpg' %}"> </a>
+	 <figcaption>Mobile view of network page </figcaption>
 	</div>
+<div>  
+
+	<p class="subtopic" id="rr">Registration and Login :-</p>
+	<p class="subtopic" id="rr1">Registration</p>
+	<p>Click on <i> Register </i> and fill up the form . please give a valid email as we are going to send a OTP to that email and you will be ask for that later. 
+	Click on <i> eye </i> &#128065; to see your password. we suggest to provide a totally different password for this site, which you have not used anywhere. your password will remain encrypted in our system. your email will be used only for login purposes, and your fullname will be used everywhere in your profile. after filling the form click on register </p>
+	<a href="{% static 'howtouse/demo3.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo3.png' %}"> </a>
+	<p>you will be asked for confirmation then click <i> send otp </i> , if no account with this email is found you will be redirected to new OTP page, otherwise you need to provide a different email ID. </p>
+	<a href="{% static 'howtouse/demo1.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo1.png' %}"> </a>
+
+	<p class="subtopic" id="rr2">OTP verification</p>
+	<p>if you provide a real email ,check your inbox (or spam folder) of that email, a 6 digit OTP have been sent. write (copy paste) the OTP in this form. if entered wrong OTP error will be shown in that case type again. if you have not get the OTP click the link   <i>Didn't get OTP </i> , we will send another OTP , enter the latest OTP. you will have atmost 5 chances to enter the OTP (per day per email). we will send OTP atmost 3 times   (per day per email). after successfull OTP verification we will redirect to your Dashboard (profile) page. Now you have access to all the features.</p>
+	<a href="{% static 'howtouse/demo2.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo2.png' %}"> </a>
+	
+	<p class="subtopic" id="rr3">Login</p>
+	<p>if you have already registered you can login now . enter your valid email ID and password in this form and click login .you will be logged in. Your password will always remain encrypted in our system. </p>
+	<a href="{% static 'howtouse/demo4.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo4.png' %}"> </a>
+
+	<p class="subtopic" id="pp">Profile <i class='fas fa-user-edit headicon'></i> :-</p>
+	<p>So after registration/login you will see this as the first page so called dashboard (profile) page. </p>
+	<a href="{% static 'howtouse/demo18.png' %}">
+	 <img class="bigimg" src="{% static 'howtouse/demo18.png' %}"> </a>
+
+  <p>
+	<span class="subtopic" id="pp1"> Edit profile </span> <br>
+	Click on <i>Edit profile </i> (present in the <i>profile page</i>) and provide all other details like Bio,school,college , now you can change your fullname.
+	<br>
+
+	<span class="subtopic" id="pp2">upload profile picture </span> <br>
+	you can change your profile picture in this <i>Edit profile</i> section or remove picture. <br>
+	<span class="subtopic" id="pp3">set privacy (public/private profile) </span>
+	 <br>
+	if you don't want others to see your profile or simply follow you, you can make your profile as Private. click the button <i>make private</i> in the edit profile section
+  </p>
+	
+	<a href="{% static 'howtouse/demo17.png' %}">
+	 <img class="bigimg" src="{% static 'howtouse/demo17.png' %}"> </a>
+
+	<p><span class="subtopic">public profile :-</span> any verified user can follow you , can see you posts and like,can see your profile ,profile pic. your profile details (but not profile pic) will be shown in public searches.</p>
+
+	<p><span class="subtopic">private profile :-</span> no one can follow you simply ,
+	only your followers and  following can see your profile ,profile pic,posts and like.your profile details  will not be shown in public searches.</p>
+	<a href="{% static 'howtouse/demo19.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo19.png' %}"> </a>
+	 <figcaption>this is a private profile</figcaption>
+	 <br>
+	<a href="{% static 'howtouse/demo11.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo11.png' %}"> </a>
+	 <figcaption>this is a public profile</figcaption>
+
+
+	<p class="subtopic" id="pp4">update status</p>
+	<p>you can post any ligal content here, you can upload pictures . find it there in the <i>update status</i> section. this post will be available in the  network page of your followers. Any verified user can see this post and like when he/she views your profile. </p>
+	<a href="{% static 'howtouse/demo16.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo16.png' %}"> </a>
+
+	<p class="subtopic" id="pp5">delete account</p>
+	<p>If you feel insecure, uncomfortable or whatever the reason, you have a option to delete you account, find it  <i class='fas fa-trash-alt'></i> there in the <i>edit profile</i> section (Dashboard). All your data, profile details, all photos, all posts, chat, email ID, password everything will be deleted. however we suggest instead of this make you profile private and complain to Help Desk.  </p>
+	<a href="{% static 'howtouse/demo17.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo17.png' %}"> </a>
+
+	<p class="subtopic" id="ee">Explore  <i class='fas fa-globe-americas headicon'></i> :- </p>
+	<p class="subtopic" id="ee1">how to follow someone</p>
+	<p>Go to <i>explore page </i> (click on the 4th button in the top navigation bar), you will find all the public profiles there. click on <i>Follow</i> button. as soon as you follow someone the person will be added to your following list. find your following list in the <i>network page</i>. </p>
+	<a href="{% static 'howtouse/demo14.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo14.png' %}"> </a>
+
+	<p class="subtopic" id="ee2">viewprofile</p>
+	<p>to view someone's profile click on <i style="font-size: 30px;color: blue;" class='fas fa-user-circle'></i> </p>
+	<a href="{% static 'howtouse/demo11.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo11.png' %}"> </a>
+
+	<p class="subtopic" id="nn">Network <i class="fa fa-users headicon"></i> :-</p>
+	<p > List of All follower & following <br>
+	
+	 select someone to chat , click on the button <button style="padding: 5px 10px; font-size: 18px;">Fullname</button> .
+	 <br>
+	<i style="font-size: 26px;color: blue;" class='fas fa-user-circle'></i> viewprofile.
+	<br>
+	 <i class='fas fa-trash-alt'></i> remove follower/following. </p>
+
+	<div style="float: left;" class="active_dot"></div> <p> &nbsp; active status . </p> 
+	<div style="float: left;" class="dotnotify">3</div> <p> &nbsp; notification (3 new/unread mszs). </p>
+	<a href="{% static 'howtouse/mobile.jpg' %}">
+	 <img class="smallimg" src="{% static 'howtouse/mobile.jpg' %}"> </a>
+	 <figcaption>Mobile view of network page </figcaption>
+	 <br>
+
+	<a href="{% static 'howtouse/demo13.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo13.png' %}"> </a>
+	 <figcaption>PC view of network page </figcaption>
+	<p class="subtopic" id="nn1">posts from following</p>
+	<p>in the network we can see posts from following, like post if you want  <button style="padding: 5px 10px; font-size: 18px; background-color: blue; color: white;">Like</button> To see others posts first follow them from explore page.  </p>
+	<a href="{% static 'howtouse/demo12.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo12.png' %}"> </a>
+
+
+	<p class="subtopic" id="cc">Chat <i class="fa fa-comments headicon"> </i> :-</p>
+	<p class="subtopic" id="cc1">to yourself</p>
+	<p>by default when you click on chat , a page will appear where you can chat yourself,  you can use it as Notes/Diary and this will be saved. </p>
+	<a href="{% static 'howtouse/demo15.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo15.png' %}"> </a>
+
+	<p class="subtopic" id="cc2">to follower & following</p>
+	<p>To chat with others go to network page , click on <button style="padding: 5px 10px; font-size: 18px;">Fullname</button>. you can only chat with your followers/following. timestamp will automatically added.</p>
+	<a href="{% static 'howtouse/demo10.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo10.png' %}"> </a>
+
+	<p class="subtopic" id="cc3">emoji</p>
+	<p>click on any emoji &#128522;, a set of emojies will appear, you can use it in your chat. &#128526; &#129312; &#9977; &#9997; &#127748; </p>
+
+	<p class="subtopic" id="cc4">clear chat</p>
+	<p>click on <i class='fas fa-trash-alt'></i> to delete chat, and this will be deleted forever from our databases</p>
+
+	<p class="subtopic" id="lg">Logout</p>
+	<p><span style="color: red;"> Logout </span> option is there at the bottom of every page</p>
+	<a href="{% static 'howtouse/demo5.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo5.png' %}"> </a>
+
+	<p class="subtopic" id="srch">Search a friend</p>
+	<p>you can Search your friend without Registration, enter the name in this form , all the public account matches with this name will be shown. you can search by name/college name/ school name/place. because of privacy reason profile pictures and posts will not be shown. </p>
+	<a href="{% static 'howtouse/demo7.png' %}">
+	 <img class="smallimg2" src="{% static 'howtouse/demo7.png' %}"> </a>
+	<br><br>
+	<a href="{% static 'howtouse/demo6.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo6.png' %}"> </a>
+
+	<p class="subtopic" id="hlp">Help :-</p>
+	<p>Help Desk is always there to help you. </p>
+	<a href="{% static 'howtouse/demo5.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo5.png' %}"> </a>
+
+	<p class="subtopic" id="hlpd">Help Desk</p>
+	<p>Registered user can directly talk with Helpdesk , find its link at the bottom of every page. </p>
+	<a href="{% static 'howtouse/demo9.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo9.png' %}"> </a>
+	
+	<p class="subtopic" id="faq">FAQ</p>
+	<p>For all users (no matter registered or not) we have created a FAQ page, where anyone can anonymously ask question and hopefully our team will reply soon.  you can post appreciation words &#128522; . find the link to FAQ page at the bottom of every page.</p>
+	<a href="{% static 'howtouse/demo8.png' %}">
+	 <img class="myimg" src="{% static 'howtouse/demo8.png' %}"> </a>
+
+	 <br><br><br>
+	 <details style="word-break: break-all;word-wrap: break-word;">
+ 	<summary id="ack" style="font-size: 26px; font-weight: bold; background-color: #ffff66;">Acknowledgement</summary>
+
+	<p>Squirrel team is thankful to </p>
+	<ul style="line-height: 1">
+		<li>pythonanywhere (server)</li>
+		<p>https://www.pythonanywhere.com</p>
+		<p>mysql</p>
+
+		<li>Django</li>
+		<p>https://docs.djangoproject.com/en/3.0/</p>
+
+		<li>bootstrap</li>
+		<p>https://getbootstrap.com/docs/4.4/getting-started/introduction/</p>
+		<p>https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css</p>
+		<p>https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js</p>
+		
+		<li>jquery</li>
+		<p>https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js</p>
+		
+		<li>fontawesome (icon credit)</li>
+		<p>https://kit.fontawesome.com/a076d05399.js</p>
+		
+
+		<li>tutorial sites</li>
+		<p>https://www.w3schools.com/html/</p>
+		<p>https://stackoverflow.com/</p>
+		<p>https://www.geeksforgeeks.org/handling-ajax-request-in-django/</p>
+
+		<li>picture credit</li>
+		<p>https://app.creately.com/diagram/rtWaBY2oBVV/view</p>
+		<p>https://images.app.goo.gl/ot5ux2RFM1AfrweS7</p>
+		<p>https://images.app.goo.gl/EGBDJQHi6PrutJUm9</p>
+		<p>http://www.ajaxload.info/</p>
+
+	</ul>
+</details>
+	<p>I am ( <a href="https://www.cse.iitb.ac.in/~akramkhan/">Akram Khan</a>)  thankful to all the persons and websites who directly or indirectly help me to complete my project. 
+	</p>
+
+	 <h2>Thankyou for using Squirrel</h2>
+
+</div>
 </div>
 
-
-
-
-
-
-
-
-
-<br><br><br>
 <footer>
   <div>
   <a href="/" target="_blank"> Home </a> &nbsp; | &nbsp;

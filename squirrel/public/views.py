@@ -15,7 +15,7 @@ User = get_user_model()
 import re
 regex="^[a-zA-Z0-9 ]+$"
 # isaplanmsapce regex
-helpdeskid=4
+helpdeskid=2
 def howtouse(request):
 	return render(request, 'howtouse.html') 
 

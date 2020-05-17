@@ -81,3 +81,27 @@
   border-radius: 20px;
   outline: none;
   }
+
+
+  .msz_time{
+    font-size: 12px;
+    color: green;
+  }
+  .msz{
+    font-size: 18px;
+    max-width: 80%;
+  }
+  .wholechat{
+    height: 350px;
+  }
+  .chat_table{
+    width: 100%;
+  }
+  .chat_table tr {
+    width: 100%;
+  }
+@media (max-width:600px) {
+  .wholechat{
+    height: 280px;
+  }
+}

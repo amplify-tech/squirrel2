@@ -1,0 +1,120 @@
+html{
+	scroll-behavior: smooth;
+}
+body{
+	padding: 0;
+	margin: 0;
+	font-size: 20px;
+}
+a:hover {
+	text-decoration: underline !important; 
+	color: green !important;
+
+}
+nav{
+	padding: 0;
+	margin: 0;
+	background-color: black;
+	font-size: 32px;
+	color: yellow;
+	text-align: center;
+}
+footer{
+	background-color: white;
+	text-align: center; color: black;
+	width: 100%;
+	font-style: italic;
+}
+footer div{
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 15px;
+  line-height: 1.6;
+  padding-bottom: 20px;
+}
+footer div a{
+  color: blue;
+  white-space: nowrap;
+}
+
+img{
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.menu{
+	background-color: #ffb3ff;
+	padding: 10px;
+	line-height: 1.2;
+	border: 2px solid black;
+}
+.menu a{
+	text-decoration: none;
+	/*color: #0047b3;*/
+	color: blue;
+}
+.details{
+	background-color: #4dffa6;
+	padding: 10px;
+	line-height: 1.2;
+}
+.details div{
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+	max-width: 700px;
+	/*border: 2px solid black;*/
+}
+ .myimg{
+ 	width: 100%;
+ 	max-width: 600px;
+ 	height: auto;
+ }
+ .smallimg{
+ 	width: 100%;
+ 	max-width: 300px;
+ 	height: auto;
+ }
+ .smallimg2{
+ 	width: 100%;
+ 	max-width: 400px;
+ 	height: auto;
+ }
+ .bigimg{
+ 	width: 100%;
+ 	max-width: 700px;
+ 	height: auto;
+ }
+ .subtopic{
+ 	font-size: 24px;
+ 	font-weight: bold;
+ }
+ .icon{
+ 	font-size: 22px;
+ 	background-color: #33ccff;
+ 	color: white;
+ 	padding: 4px 12px;
+ }
+ .icon2{
+ 	font-size: 18px;
+ 	background-color: #33ccff;
+ 	color: white;
+ 	padding: 2px 10px;
+ }
+  .active_dot{  
+    width: 22px !important; 
+    height: 22px !important;
+    background-color: #00cc00; 
+    border-radius: 50%;"
+  }
+  .dotnotify{
+    width: 25px !important; 
+    height: 25px !important;
+    text-align: center;
+    vertical-align: middle;
+    background-color: red; 
+    border-radius: 50%;"
+  }
+
+	ul p{
+		color: blue;
+	}

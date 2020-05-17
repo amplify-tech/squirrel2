@@ -4,30 +4,6 @@
 {% block title %} Chat {% endblock %}
 {% block style %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/chat.css' %}">
-  <style>
-  .msz_time{
-    font-size: 12px;
-    color: green;
-  }
-  .msz{
-    font-size: 18px;
-    max-width: 80%;
-  }
-  .wholechat{
-    height: 350px;
-  }
-  .chat_table{
-    width: 100%;
-  }
-  .chat_table tr {
-    width: 100%;
-  }
-@media (max-width:600px) {
-  .wholechat{
-    height: 280px;
-  }
-}
-  </style>
 
  {% endblock %}
 
@@ -66,7 +42,7 @@
         Follow someone from explore page.<br>
         Select someone from followers/following list from the network page.<br>
         Start a chat &#128522; <br>
-      <a href="/user/{{user.id}}/viewprofile/1" style="font-size: 16px;"> -- help desk</a>
+      <a href="/user/{{user.id}}/viewprofile/2" style="font-size: 16px;"> -- help desk</a>
 
       </p>
         </tr>
