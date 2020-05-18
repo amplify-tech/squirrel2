@@ -196,7 +196,6 @@ def findfrnd(request,  user_id=None) :
 
             all_private = Private_prof.objects.all()
             for pp in all_private:
-                print(pp.owner.id)
                 all_users=all_users.exclude(id=pp.owner.id)   
                  #remove those are already  following
 
@@ -511,15 +510,11 @@ def makeprivate(request, user_id=None):
         if int(user_id) == request.user.id:
             user = request.user
             if Private_prof.objects.filter(owner=user).exists() :
-                print("it was private")
                 thprof =Private_prof.objects.get(owner=user)
                 thprof.delete();
-                print("now its public")
             else:
-                print("it was publiv")
                 newprv = Private_prof(owner=user)
                 newprv.save()
-                print("now its private")
 
             return HttpResponse("success")
 

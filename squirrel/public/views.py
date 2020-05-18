@@ -131,5 +131,4 @@ def filter_search(request, thename=None):
 				public_prof = public_prof.exclude(owner = pp.owner)
 
 			profilelist = public_prof.filter(query)
-			print(len(profilelist))
 			return render(request, 'public_home.html', {'profilelist': profilelist}) 
