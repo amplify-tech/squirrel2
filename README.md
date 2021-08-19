@@ -1,7 +1,7 @@
 # Squirrel: social networking website
-# developer : Akram Khan (Roll no. 180050006) CSE @IITB  
+## developer : Akram Khan (Roll no. 180050006) CSE @IITB  
 
-# the website is live at :  https://squirrel.pythonanywhere.com/
+## the website is live at :  https://squirrel.pythonanywhere.com/
 
 a messenger type platform, where anyone can create account , follows someone and chat with them.
 user can share posts and pictures, react to post, change profile privacy.
